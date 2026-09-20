@@ -162,13 +162,13 @@ export function OverviewView({
       {/* Row 2: Main Overview Grid (Network Activity + Security Posture) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Network Activity Area Chart (8 cols) */}
-        <div className="lg:col-span-8 rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] flex flex-col justify-between">
+        <div className="lg:col-span-8 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200 flex flex-col justify-between">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
             <div>
-              <h3 className="text-[17px] sm:text-lg font-bold text-gray-950 tracking-tight">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-950 tracking-tight font-heading">
                 Network Activity
               </h3>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1">
+              <p className="text-sm font-medium text-gray-500 mt-1">
                 Volumetric distribution of inspected traffic
               </p>
             </div>
@@ -298,13 +298,13 @@ export function OverviewView({
         </div>
 
         {/* Security Posture Card (4 cols) */}
-        <div className="lg:col-span-4 rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] flex flex-col justify-between">
+        <div className="lg:col-span-4 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
-              <h3 className="text-[17px] sm:text-lg font-bold text-gray-950 tracking-tight">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-950 tracking-tight font-heading">
                 Security Posture
               </h3>
-              <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 border border-emerald-200/80">
+              <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200/80">
                 Optimal
               </span>
             </div>
@@ -362,13 +362,13 @@ export function OverviewView({
       {/* Row 3: Threat Category Breakdown & Recent Events */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Threat Distribution (Horizontal Bars - 4 cols) */}
-        <div className="lg:col-span-4 rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+        <div className="lg:col-span-4 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200">
           <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
             <div>
-              <h3 className="text-[17px] sm:text-lg font-bold text-gray-950 tracking-tight">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-950 tracking-tight font-heading">
                 Threat Distribution
               </h3>
-              <p className="text-xs sm:text-sm text-gray-500 mt-1">
+              <p className="text-sm font-medium text-gray-500 mt-1">
                 Classified categories across flows
               </p>
             </div>
@@ -408,14 +408,14 @@ export function OverviewView({
         </div>
 
         {/* Recent Security Events Table (8 cols) */}
-        <div className="lg:col-span-8 rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] flex flex-col justify-between">
+        <div className="lg:col-span-8 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200 flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
               <div>
-                <h3 className="text-[17px] sm:text-lg font-bold text-gray-950 tracking-tight">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-950 tracking-tight font-heading">
                   Recent Security Events
                 </h3>
-                <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                <p className="text-sm font-medium text-gray-500 mt-1">
                   Latest evaluated flows in RoNeTC+ gateway
                 </p>
               </div>

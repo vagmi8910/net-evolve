@@ -175,12 +175,12 @@ export function ZeroDayDiscoveryView({
       {/* Main Split: 2D PCA Scatter on Left, Profile Card on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: 2D PCA Projection Scatter (7 cols) */}
-        <div className="lg:col-span-7 rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-4">
+        <div className="lg:col-span-7 rounded-2xl border border-slate-200/90 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200 space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-900">
+            <h3 className="text-xl font-bold text-gray-950 font-heading tracking-tight">
               2D Principal Component Projection (PCA)
             </h3>
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-gray-500 font-medium">
               Latent PC1 vs PC2 • Click point to select cluster
             </span>
           </div>

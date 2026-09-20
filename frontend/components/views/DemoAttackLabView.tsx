@@ -336,19 +336,19 @@ export function DemoAttackLabView({
       <div className="space-y-6">
         {/* Section 1: Known Closed-Set Traffic */}
         <div>
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-3">
+          <h3 className="text-xl font-bold text-gray-950 font-heading mb-4">
             Known Closed-Set Classes (Base Trained Vocabulary)
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {ATTACK_CARDS.filter((c) => !c.isZeroDay).map((card) => (
               <div
                 key={card.category}
-                className="rounded-2xl border border-[#E5E7EB] bg-white p-5 flex flex-col justify-between hover:border-gray-300 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition"
+                className="rounded-2xl border border-slate-200/90 bg-white p-5 flex flex-col justify-between hover:border-slate-300 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-semibold text-gray-900">{card.category}</span>
-                    <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-medium text-emerald-700 border border-emerald-200">
+                    <span className="text-sm font-bold text-gray-900 font-heading">{card.category}</span>
+                    <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-bold text-emerald-700 border border-emerald-200">
                       Known
                     </span>
                   </div>
@@ -375,14 +375,14 @@ export function DemoAttackLabView({
 
         {/* Section 2: Withheld Zero-Day Attacks */}
         <div>
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-purple-700 mb-3">
+          <h3 className="text-xl font-bold text-purple-950 font-heading mb-4">
             Withheld Zero-Day Threats (Open-Set Evaluation)
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {ATTACK_CARDS.filter((c) => c.isZeroDay).map((card) => (
               <div
                 key={card.category}
-                className="rounded-2xl border border-purple-200/80 bg-purple-50/20 p-5 flex flex-col justify-between hover:border-purple-300 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition"
+                className="rounded-2xl border border-purple-200/90 bg-purple-50/30 p-5 flex flex-col justify-between hover:border-purple-300 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">

@@ -51,9 +51,9 @@ export function MetricCard({
   const iconStyle = iconColor || iconContainerMap[color] || "text-gray-600 bg-gray-50 border-gray-200";
 
   return (
-    <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] transition-all duration-200 hover:border-gray-300 hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+    <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] transition-all duration-200 hover:border-slate-300 hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)]">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">
+        <span className="text-sm font-bold uppercase tracking-wider text-gray-500 font-heading">
           {title}
         </span>
         {Icon && (
@@ -64,18 +64,18 @@ export function MetricCard({
       </div>
 
       <div className="mt-3 flex items-baseline justify-between">
-        <div className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-950">
+        <div className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-950 font-heading">
           {value}
         </div>
         {delta && (
-          <span className={`rounded-full px-2 py-0.5 text-xs font-semibold border ${deltaColorMap[effectiveDeltaType]}`}>
+          <span className={`rounded-full px-2 py-0.5 text-xs font-bold border ${deltaColorMap[effectiveDeltaType]}`}>
             {delta}
           </span>
         )}
       </div>
 
       {subtitle && (
-        <div className="mt-1.5 text-xs sm:text-[13px] text-gray-500 font-medium">
+        <div className="mt-2 text-sm text-gray-500 font-medium">
           {subtitle}
         </div>
       )}

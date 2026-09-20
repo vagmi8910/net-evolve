@@ -524,7 +524,7 @@ export function LiveTrafficView({
       {/* ========================================================== */}
       {/* SECTION 1 — LIVE TRAFFIC CONTROL BAR                      */}
       {/* ========================================================== */}
-      <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-4 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)]">
         <div className="flex flex-wrap items-center justify-between gap-4">
           {/* Left Controls: Status, Play/Pause, Reset, Speed, Scenario */}
           <div className="flex flex-wrap items-center gap-3">
@@ -666,18 +666,18 @@ export function LiveTrafficView({
         {/* ======================================================== */}
         <div className="lg:col-span-8 space-y-6">
           {/* SECTION 2 — LIVE TRAFFIC VISUALIZATION (CHART) */}
-          <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200">
             <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
               <div>
-                <div className="flex items-center space-x-2">
-                  <h3 className="text-[17px] sm:text-lg font-bold text-gray-950 tracking-tight">
+                <div className="flex items-center space-x-2.5">
+                  <h3 className="text-xl sm:text-2xl font-bold text-gray-950 tracking-tight font-heading">
                     Traffic Flow
                   </h3>
-                  <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700 border border-emerald-200/70">
+                  <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-bold text-emerald-700 border border-emerald-200/70">
                     Live Telemetry
                   </span>
                 </div>
-                <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+                <p className="text-sm text-gray-500 mt-1 font-medium">
                   Real-time network flows processed by the security gateway ({chartWindowSeconds}s rolling window).
                 </p>
               </div>
@@ -824,12 +824,12 @@ export function LiveTrafficView({
           </div>
 
           {/* SECTION 3 — REAL-TIME FLOW PIPELINE */}
-          <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
-            <div className="flex items-center justify-between mb-3 border-b border-gray-100 pb-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="flex items-center justify-between mb-3 border-b border-gray-100 pb-2.5">
+              <span className="text-[13px] font-bold uppercase tracking-wider text-gray-700 font-heading">
                 Live Gateway Execution Pipeline
               </span>
-              <span className="text-[11px] font-medium text-gray-400">
+              <span className="text-xs font-semibold text-gray-400">
                 End-to-End Real-Time Ingress
               </span>
             </div>
@@ -910,14 +910,14 @@ export function LiveTrafficView({
           </div>
 
           {/* SECTION 4 — LIVE REQUEST STREAM TABLE */}
-          <div className="rounded-2xl border border-[#E5E7EB] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
+          <div className="rounded-2xl border border-slate-200/90 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] overflow-hidden">
             {/* Table Header & Controls */}
-            <div className="p-4 border-b border-gray-100 flex flex-wrap items-center justify-between gap-3 bg-[#FAFAFA]">
+            <div className="p-4 sm:p-5 border-b border-gray-100 flex flex-wrap items-center justify-between gap-3 bg-[#FAFAFA]">
               <div>
-                <h3 className="text-[15px] font-bold text-gray-950 tracking-tight">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-950 tracking-tight font-heading">
                   Live Flow Stream
                 </h3>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-sm text-gray-500 mt-1 font-medium">
                   Inspected flows buffered in gateway memory ({filteredEvents.length} visible).
                 </p>
               </div>
@@ -1099,17 +1099,17 @@ export function LiveTrafficView({
         {/* ======================================================== */}
         <div className="lg:col-span-4 space-y-6">
           {/* SECTION 5 — GATEWAY ACTIVITY SIDE PANEL */}
-          <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200">
             <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
               <div>
-                <h3 className="text-[16px] font-bold text-gray-950 tracking-tight">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-950 tracking-tight font-heading">
                   Gateway Activity
                 </h3>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-sm text-gray-500 mt-1 font-medium">
                   Real-time telemetry & model enforcement state
                 </p>
               </div>
-              <span className="flex h-2 w-2 rounded-full bg-[#16A34A]" />
+              <span className="flex h-2.5 w-2.5 rounded-full bg-[#16A34A]" />
             </div>
 
             <div className="space-y-3.5 text-xs">
@@ -1173,12 +1173,12 @@ export function LiveTrafficView({
           </div>
 
           {/* SECTION 6 — TRAFFIC SIMULATOR CARD & LAST INJECTED FLOW */}
-          <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-4">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200 space-y-4">
             <div>
-              <h3 className="text-[16px] font-bold text-gray-950 tracking-tight">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-950 tracking-tight font-heading">
                 Traffic Simulator
               </h3>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-sm text-gray-500 mt-1 font-medium">
                 Generate controlled traffic through the live RoNeTC+ inference pipeline.
               </p>
             </div>
@@ -1313,12 +1313,12 @@ export function LiveTrafficView({
           </div>
 
           {/* SECTION 7 — VISUAL NETWORK ACTIVITY (DECISION SUMMARY) */}
-          <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-3">
+          <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200 space-y-3">
             <div>
-              <h3 className="text-[16px] font-bold text-gray-950 tracking-tight">
+              <h3 className="text-xl sm:text-2xl font-bold text-gray-950 tracking-tight font-heading">
                 Traffic Decisions
               </h3>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-sm text-gray-500 mt-1 font-medium">
                 Distribution of allowed, monitored, and blocked traffic.
               </p>
             </div>

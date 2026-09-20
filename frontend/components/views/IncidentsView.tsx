@@ -246,7 +246,7 @@ export function IncidentsView({
         {/* Right Column: Selected Incident Inspection (5 cols) */}
         <div className="lg:col-span-5">
           {selectedIncident ? (
-            <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-5 sticky top-24">
+            <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200 space-y-5 sticky top-24">
               <div className="border-b border-gray-100 pb-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-mono text-xs font-semibold text-gray-500">
@@ -257,10 +257,10 @@ export function IncidentsView({
                     <IncidentStatusBadge status={selectedIncident.status} />
                   </div>
                 </div>
-                <h3 className="text-base font-semibold text-gray-900">
+                <h3 className="text-xl font-bold text-gray-950 font-heading">
                   {selectedIncident.title}
                 </h3>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-sm font-medium text-gray-500 mt-1">
                   Target Destination: <span className="font-mono text-gray-800">{selectedIncident.destination_ip}</span>
                 </p>
               </div>

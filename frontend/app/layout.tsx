@@ -1,20 +1,39 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Plus_Jakarta_Sans, Inter } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const plusJakarta = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
 });
+
+export const viewport: Viewport = {
+  themeColor: "#007AFF",
+  width: "device-width",
+  initialScale: 1,
+};
 
 export const metadata: Metadata = {
   title: "NetEvolve Security | Enterprise SOC Traffic Intelligence",
-  description: "Enterprise network traffic monitoring and continual zero-day discovery powered by RoNeTC+ Evidential Deep Learning.",
+  description:
+    "Enterprise network traffic monitoring, RoNeTC+ evidential classification, and continual zero-day discovery.",
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
 };
 
 export default function RootLayout({
@@ -23,8 +42,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-[#F7F8FA] text-[#111827]">{children}</body>
+    <html
+      lang="en"
+      className={`${plusJakarta.variable} ${inter.variable} h-full antialiased`}
+    >
+      <head>
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+      </head>
+      <body className="min-h-full flex flex-col bg-[#F7F8FA] text-[#0F172A]">
+        {children}
+      </body>
     </html>
   );
 }

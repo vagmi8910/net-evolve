@@ -22,6 +22,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 
+import { NetEvolveLogo } from "@/components/ui/NetEvolveLogo";
+
 interface SidebarProps {
   activeTab: string;
   setActiveTab: (tab: string) => void;
@@ -73,23 +75,21 @@ export function Sidebar({
 
   return (
     <aside
-      className={`relative flex flex-col border-r border-[#E5E7EB] bg-white transition-all duration-200 z-30 select-none ${
-        isCollapsed ? "w-[68px]" : "w-[240px]"
+      className={`relative flex flex-col border-r border-[#E2E8F0] bg-white transition-all duration-200 z-30 select-none ${
+        isCollapsed ? "w-[68px]" : "w-[245px]"
       }`}
     >
       {/* Brand Header */}
-      <div className="flex h-16 items-center justify-between border-b border-[#E5E7EB] px-4">
+      <div className="flex h-16 items-center justify-between border-b border-[#E2E8F0] px-4">
         <div className="flex items-center space-x-3 overflow-hidden">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-50 border border-blue-100 text-[#007AFF]">
-            <Shield className="h-4 w-4" />
-          </div>
+          <NetEvolveLogo size={32} showText={false} />
           {!isCollapsed && (
             <div className="flex flex-col truncate">
-              <span className="text-[15px] font-bold text-gray-950 tracking-wider leading-tight">
+              <span className="text-[16px] font-bold text-gray-950 tracking-wider leading-tight font-heading">
                 NETEVOLVE
               </span>
-              <span className="text-[12px] text-gray-500 font-medium leading-tight">
-                Security
+              <span className="text-[11px] text-[#007AFF] font-bold uppercase tracking-wider leading-tight">
+                Security Gateway
               </span>
             </div>
           )}
@@ -112,9 +112,9 @@ export function Sidebar({
       {/* Navigation Sections */}
       <div className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
         {sections.map((section) => (
-          <div key={section.title} className="space-y-1">
+          <div key={section.title} className="space-y-1.5">
             {!isCollapsed && (
-              <h3 className="px-2 text-[11px] font-bold uppercase tracking-wider text-gray-400">
+              <h3 className="px-2 text-[12px] font-bold uppercase tracking-wider text-gray-500 font-heading">
                 {section.title}
               </h3>
             )}

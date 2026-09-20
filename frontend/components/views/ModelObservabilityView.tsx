@@ -43,7 +43,7 @@ export function ModelObservabilityView() {
       </div>
 
       {/* Top Architecture Summary Card */}
-      <div className="rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+      <div className="rounded-2xl border border-slate-200/90 bg-white p-6 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center space-x-3.5">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 border border-blue-100 text-[#007AFF]">
@@ -51,7 +51,7 @@ export function ModelObservabilityView() {
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h2 className="text-base font-semibold text-gray-900">
+                <h2 className="text-xl font-bold text-gray-950 font-heading">
                   {modelInfo?.name || "RoNeTC+"} Multi-View Evidential Classifier
                 </h2>
                 <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-[#007AFF] border border-blue-200">
@@ -94,9 +94,9 @@ export function ModelObservabilityView() {
       {/* 3 Domain Views Architecture */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* IP View */}
-        <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-3">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200 space-y-3">
           <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
-            <span className="font-semibold text-sm text-gray-900">🌐 IP Domain View</span>
+            <span className="font-bold text-base text-gray-950 font-heading">🌐 IP Domain View</span>
             <span className="text-xs font-mono text-[#007AFF] bg-blue-50 px-2 py-0.5 rounded">
               128 dim
             </span>
@@ -124,9 +124,9 @@ export function ModelObservabilityView() {
         </div>
 
         {/* Transport View */}
-        <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-3">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200 space-y-3">
           <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
-            <span className="font-semibold text-sm text-gray-900">⚡ Transport View</span>
+            <span className="font-bold text-base text-gray-950 font-heading">⚡ Transport Domain View</span>
             <span className="text-xs font-mono text-[#007AFF] bg-blue-50 px-2 py-0.5 rounded">
               128 dim
             </span>
@@ -154,9 +154,9 @@ export function ModelObservabilityView() {
         </div>
 
         {/* Payload View */}
-        <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-3">
+        <div className="rounded-2xl border border-slate-200/90 bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.05),0_1px_2px_rgba(0,0,0,0.04)] hover:shadow-md transition-all duration-200 space-y-3">
           <div className="flex items-center justify-between border-b border-gray-100 pb-2.5">
-            <span className="font-semibold text-sm text-gray-900">📦 Payload View</span>
+            <span className="font-bold text-base text-gray-950 font-heading">📦 Payload Domain View</span>
             <span className="text-xs font-mono text-[#007AFF] bg-blue-50 px-2 py-0.5 rounded">
               128 dim
             </span>
