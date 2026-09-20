@@ -29,6 +29,8 @@ const DEFAULT_METRICS: SimStatus = {
 
 export function useSocStream() {
   const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [connectionStatus, setConnectionStatus] = useState<"CONNECTED" | "RECONNECTING" | "DISCONNECTED">("DISCONNECTED");
+  const [lastEventTimestamp, setLastEventTimestamp] = useState<number | null>(null);
   const [events, setEvents] = useState<TrafficEvent[]>([]);
   const [metrics, setMetrics] = useState<SimStatus>(DEFAULT_METRICS);
   const [incidents, setIncidents] = useState<Incident[]>([]);
@@ -46,6 +48,7 @@ export function useSocStream() {
       ]);
       if (liveData.events && liveData.events.length > 0) {
         setEvents(liveData.events);
+        setLastEventTimestamp(Date.now());
       }
       if (liveData.metrics) {
         setMetrics(liveData.metrics);
@@ -56,15 +59,37 @@ export function useSocStream() {
     }
   }, []);
 
+  const injectEvent = useCallback((newEv: TrafficEvent, newMetrics?: SimStatus, newIncident?: Incident) => {
+    setLastEventTimestamp(Date.now());
+    setEvents((prev) => {
+      if (prev.some((e) => e.event_id === newEv.event_id)) return prev;
+      return [newEv, ...prev.slice(0, 199)];
+    });
+    if (newMetrics) setMetrics(newMetrics);
+    if (newIncident) {
+      setIncidents((prev) => {
+        const idx = prev.findIndex((i) => i.id === newIncident.id);
+        if (idx >= 0) {
+          const copy = [...prev];
+          copy[idx] = newIncident;
+          return copy;
+        }
+        return [newIncident, ...prev.slice(0, 99)];
+      });
+    }
+  }, []);
+
   const connectWebSocket = useCallback(() => {
     if (socketRef.current?.readyState === WebSocket.OPEN) return;
 
     try {
+      setConnectionStatus("RECONNECTING");
       const ws = new WebSocket(WS_BASE);
       socketRef.current = ws;
 
       ws.onopen = () => {
         setIsConnected(true);
+        setConnectionStatus("CONNECTED");
       };
 
       ws.onmessage = (event) => {
@@ -74,10 +99,15 @@ export function useSocStream() {
             if (data.status) setMetrics(data.status);
             if (data.recent_events && data.recent_events.length > 0) {
               setEvents(data.recent_events.reverse());
+              setLastEventTimestamp(Date.now());
             }
           } else if (data.type === "TRAFFIC_EVENT") {
             const newEv: TrafficEvent = data.event;
-            setEvents((prev) => [newEv, ...prev.slice(0, 199)]);
+            setLastEventTimestamp(Date.now());
+            setEvents((prev) => {
+              if (prev.some((e) => e.event_id === newEv.event_id)) return prev;
+              return [newEv, ...prev.slice(0, 199)];
+            });
             if (data.metrics) {
               setMetrics(data.metrics);
             }
@@ -101,6 +131,7 @@ export function useSocStream() {
 
       ws.onclose = () => {
         setIsConnected(false);
+        setConnectionStatus("DISCONNECTED");
         // Reconnect after 2 seconds
         reconnectTimeoutRef.current = setTimeout(connectWebSocket, 2000);
       };
@@ -110,6 +141,7 @@ export function useSocStream() {
       };
     } catch {
       setIsConnected(false);
+      setConnectionStatus("DISCONNECTED");
       reconnectTimeoutRef.current = setTimeout(connectWebSocket, 3000);
     }
   }, []);
@@ -164,6 +196,9 @@ export function useSocStream() {
 
   return {
     isConnected,
+    connectionStatus,
+    lastEventTimestamp,
+    injectEvent,
     events,
     metrics,
     incidents,

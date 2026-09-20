@@ -28,6 +28,9 @@ export default function SOCDashboardPage() {
 
   const {
     isConnected,
+    connectionStatus,
+    lastEventTimestamp,
+    injectEvent,
     events,
     metrics,
     incidents,
@@ -102,12 +105,18 @@ export default function SOCDashboardPage() {
         <LiveTrafficView
           events={events}
           metrics={metrics}
+          isConnected={isConnected}
+          connectionStatus={connectionStatus}
+          lastEventTimestamp={lastEventTimestamp}
+          onInjectEvent={injectEvent}
           onSelectEvent={setSelectedEvent}
           onStart={startSimulation}
           onPause={pauseSimulation}
           onResume={resumeSimulation}
           onStop={stopSimulation}
           onReset={resetSimulation}
+          onNavigateToDiscovery={() => setActiveTab("discovery")}
+          onNavigateToIncidents={() => setActiveTab("incidents")}
         />
       )}
 

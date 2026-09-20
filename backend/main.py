@@ -261,6 +261,19 @@ def run_seed_attack(seed_id: str):
 
     incident = incident_svc.process_event(event)
 
+    # Broadcast seed event to live websockets
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            asyncio.create_task(sim_svc.broadcast({
+                "type": "TRAFFIC_EVENT",
+                "event": event.model_dump(),
+                "metrics": sim_svc.get_status(),
+                "incident": incident.model_dump() if incident else None,
+            }))
+    except Exception:
+        pass
+
     return event
 
 
