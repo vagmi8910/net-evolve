@@ -319,10 +319,17 @@ def trigger_discovery_run(algorithm: str = "kmeans", n_clusters: int = 5):
 # -------------------------------------------------------------
 @app.post("/api/continual-learning/start", response_model=ContinualUpdateResponse)
 def start_continual_learning():
-    return continual_svc.execute_continual_update()
+    try:
+        return continual_svc.execute_continual_update()
+    except Exception as exc:
+        import traceback
+        raise HTTPException(status_code=500, detail=f"{type(exc).__name__}: {exc}\n{traceback.format_exc()}")
 
 
 @app.post("/api/continual-learning/reset")
 def reset_continual_learning():
-    continual_svc.reset_to_base()
-    return {"status": "RESET_TO_BASE_5_CLASSES", "active_classes": inference_svc.current_classes}
+    try:
+        continual_svc.reset_to_base()
+        return {"status": "RESET_TO_BASE_5_CLASSES", "active_classes": inference_svc.current_classes}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"{type(exc).__name__}: {exc}")

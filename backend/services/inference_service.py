@@ -101,16 +101,24 @@ class InferenceService:
         self.is_expanded = False
 
     def expand_model_incremental(self, new_classes: List[str]):
-        """Expands classifier heads for continually learned classes."""
+        """Expands classifier heads for continually learned classes. Safe to call multiple times."""
+        if self.is_expanded:
+            # Already expanded — just return current state, don't expand again
+            return
+
         from incremental.continual_learner import expand_classifier_head
         num_new = len(new_classes)
         expand_classifier_head(self.model, num_new_classes=num_new)
-        
+
         # Load incremental checkpoint if adding Analysis & Backdoor
         inc_ckpt = ROOT_DIR / "models" / "ronetc" / "incremental_model.pt"
         if inc_ckpt.exists() and set(new_classes) == {"Analysis", "Backdoor"}:
-            self.model.load_state_dict(torch.load(inc_ckpt, map_location="cpu", weights_only=False))
-        
+            # strict=False allows loading even if output head shapes differ slightly
+            self.model.load_state_dict(
+                torch.load(inc_ckpt, map_location="cpu", weights_only=False),
+                strict=False,
+            )
+
         self.model.eval()
         for c in new_classes:
             if c not in self.current_classes:
