@@ -12,6 +12,7 @@ from pathlib import Path
 import numpy as np
 import json
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 

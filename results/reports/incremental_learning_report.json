@@ -1,0 +1,17 @@
+{
+  "timestamp": "2026-09-20T18:39:34",
+  "epochs": 2,
+  "novel_classes_added": 2,
+  "total_classes": 7,
+  "continual_metrics": {
+    "overall_accuracy": 0.66125,
+    "overall_macro_f1": 0.5034747694953439,
+    "old_class_accuracy": 0.74,
+    "new_class_accuracy": 0.53,
+    "forgetting_measure": 0.0
+  },
+  "loss_history": [
+    11.63494233524098,
+    13.511440725887523
+  ]
+}

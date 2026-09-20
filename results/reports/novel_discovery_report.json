@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-09-20T18:38:11",
+  "algorithm": "kmeans",
+  "uncertainty_threshold": 0.18435819000005718,
+  "metrics": {
+    "n_samples": 500,
+    "n_clusters": 5,
+    "n_noise": 0,
+    "silhouette_score": 0.44151267409324646,
+    "adjusted_rand_index": 0.04564222611984248,
+    "normalized_mutual_info": 0.09791749858231173,
+    "cluster_purity": 0.774
+  },
+  "cluster_distribution": {
+    "0": 167,
+    "1": 94,
+    "2": 207,
+    "3": 29,
+    "4": 3
+  }
+}

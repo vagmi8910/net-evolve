@@ -36,9 +36,22 @@ from utils.logger import get_logger
 logger = get_logger(__name__)
 
 
+import argparse
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Train RoNeTC Multi-View Classifier")
+    parser.add_argument("--epochs", type=int, default=None, help="Override training epochs")
+    parser.add_argument("--batch-size", type=int, default=None, help="Override batch size")
+    args = parser.parse_args()
+
     config = load_config()
     set_seed(config["project"]["random_seed"])
+
+    if args.epochs is not None:
+        config["ronetc"]["training"]["epochs"] = args.epochs
+    if args.batch_size is not None:
+        config["ronetc"]["training"]["batch_size"] = args.batch_size
 
     device = torch.device(
         "cuda" if config["device"]["use_cuda_if_available"] and torch.cuda.is_available() else "cpu"

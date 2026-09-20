@@ -21,7 +21,7 @@ import numpy as np
 from torch.utils.data import DataLoader
 from sklearn.metrics import classification_report, confusion_matrix, f1_score
 
-from data.multiview_dataset import build_multiview_dataloaders
+from data.multiview_dataset import MultiViewFlowDataset, build_multiview_dataloaders
 from preprocessing.multiview_preprocessor import load_multiview_arrays
 from preprocessing.view_encoder import ViewEncoder
 from models.model_factory import build_multiview_extractor
@@ -38,7 +38,19 @@ from utils.logger import get_logger
 logger = get_logger(__name__)
 
 
+import argparse
+
+
 def main() -> None:
+    parser = argparse.ArgumentParser(description="RoNeTC Open-Set Evaluation")
+    parser.add_argument(
+        "--max-samples",
+        type=int,
+        default=None,
+        help="Max samples per split for fast CPU evaluation (e.g. 2000)",
+    )
+    args = parser.parse_args()
+
     config = load_config()
     classes = load_classes()
     set_seed(config["project"]["random_seed"])
@@ -59,20 +71,32 @@ def main() -> None:
     test_known_arrays = load_multiview_arrays(processed_dir, "test_known")
     test_unknown_arrays = load_multiview_arrays(processed_dir, "test_unknown")
 
-    # Combine known test and unknown test for final evaluation
-    # But first, we need to extract predictions. We can do this efficiently using dataloaders.
+    if args.max_samples is not None:
+        logger.info(f"Limiting evaluation to first {args.max_samples} samples per split.")
+        for k in val_arrays:
+            val_arrays[k] = val_arrays[k][: args.max_samples]
+        for k in test_known_arrays:
+            test_known_arrays[k] = test_known_arrays[k][: args.max_samples]
+        for k in test_unknown_arrays:
+            test_unknown_arrays[k] = test_unknown_arrays[k][: args.max_samples]
+
     batch_size = config["ronetc"]["training"]["batch_size"]
     
     # We only need val and test for evaluation
-    _, val_loader, _ = build_multiview_dataloaders(
-        val_arrays, val_arrays, val_arrays, batch_size=batch_size, shuffle_train=False
+    val_dataset = MultiViewFlowDataset(
+        val_arrays["ip"], val_arrays["transport"], val_arrays["payload"], labels=val_arrays.get("labels")
     )
-    _, test_known_loader, _ = build_multiview_dataloaders(
-        test_known_arrays, test_known_arrays, test_known_arrays, batch_size=batch_size, shuffle_train=False
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+
+    test_known_dataset = MultiViewFlowDataset(
+        test_known_arrays["ip"], test_known_arrays["transport"], test_known_arrays["payload"], labels=test_known_arrays.get("labels")
     )
-    _, test_unknown_loader, _ = build_multiview_dataloaders(
-        test_unknown_arrays, test_unknown_arrays, test_unknown_arrays, batch_size=batch_size, shuffle_train=False
+    test_known_loader = DataLoader(test_known_dataset, batch_size=batch_size, shuffle=False)
+
+    test_unknown_dataset = MultiViewFlowDataset(
+        test_unknown_arrays["ip"], test_unknown_arrays["transport"], test_unknown_arrays["payload"], labels=test_unknown_arrays.get("labels")
     )
+    test_unknown_loader = DataLoader(test_unknown_dataset, batch_size=batch_size, shuffle=False)
 
     # --- Build and Load Model ---
     rc = config["ronetc"]
@@ -94,9 +118,10 @@ def main() -> None:
         combination_order=combination_order,
     ).to(device)
 
-    # Load weights
     models_dir = get_models_dir(config)
-    model_path = models_dir / "best_ronetc_model.pth"
+    model_path = models_dir / "ronetc" / "best_model.pt"
+    if not model_path.exists():
+        model_path = models_dir / "best_ronetc_model.pth"
     if not model_path.exists():
         logger.error(f"Model weights not found at {model_path}. Train the model first.")
         sys.exit(1)
@@ -157,13 +182,14 @@ def main() -> None:
     K = config["ronetc"]["opinion_generator"]["num_classes"]
     
     test_b = np.concatenate([known_b, unknown_b], axis=0)
-    test_u = np.concatenate([known_u, unknown_u], axis=0)
+    test_u = np.concatenate([known_u, unknown_u], axis=0).squeeze()
     
     # Labels: 0 to K-1 for known, K for unknown
-    unknown_labels_numeric = np.full_like(unknown_y, K)
-    test_y = np.concatenate([known_y, unknown_labels_numeric], axis=0)
+    known_y_1d = np.asarray(known_y, dtype=int).squeeze()
+    unknown_labels_numeric = np.full(len(unknown_y), K, dtype=int)
+    test_y = np.concatenate([known_y_1d, unknown_labels_numeric], axis=0).astype(int)
     
-    preds = evaluator.predict(test_b, test_u)
+    preds = evaluator.predict(test_b, test_u).astype(int)
 
     # --- Step 3: Metrics & Reporting ---
     results_dir = get_results_dir(config)

@@ -1,6 +1,6 @@
 {
   "source": "unsw_nb15_adapter",
-  "timestamp": "2026-09-07T20:25:57",
+  "timestamp": "2026-09-20T15:25:24",
   "n_train": 127872,
   "n_val": 31969,
   "n_test_known": 77154,
@@ -14,7 +14,7 @@
   ],
   "future_unknown_classes": [
     "Analysis",
-    "Backdoors",
+    "Backdoor",
     "Reconnaissance",
     "Shellcode",
     "Worms"

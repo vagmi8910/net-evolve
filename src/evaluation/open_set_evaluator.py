@@ -95,9 +95,10 @@ class OpenSetEvaluator:
         closed_set_preds = np.argmax(beliefs, axis=1)
 
         # Apply threshold to find unknowns
-        is_unknown_pred = uncertainties >= threshold
+        u_1d = np.asarray(uncertainties).squeeze()
+        is_unknown_pred = u_1d >= threshold
 
         # Final predictions: K for unknown, argmax for known
         final_preds = np.where(is_unknown_pred, K, closed_set_preds)
 
-        return final_preds
+        return np.asarray(final_preds).squeeze()

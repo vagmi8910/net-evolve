@@ -62,9 +62,14 @@ class MultiViewFlowDataset(Dataset):
         self.ip = torch.as_tensor(ip_tensors, dtype=torch.float32)
         self.transport = torch.as_tensor(transport_tensors, dtype=torch.float32)
         self.payload = torch.as_tensor(payload_tensors, dtype=torch.float32)
-        self.labels: Optional[torch.Tensor] = (
-            torch.as_tensor(labels, dtype=torch.long) if labels is not None else None
-        )
+        if labels is not None:
+            if isinstance(labels, np.ndarray) and (labels.dtype == object or np.issubdtype(labels.dtype, np.str_)):
+                _, factorized = np.unique(labels, return_inverse=True)
+                self.labels: Optional[torch.Tensor] = torch.as_tensor(factorized, dtype=torch.long)
+            else:
+                self.labels = torch.as_tensor(labels, dtype=torch.long)
+        else:
+            self.labels = None
 
     # ------------------------------------------------------------------
     def __len__(self) -> int:

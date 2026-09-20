@@ -11,6 +11,7 @@ import sys
 from pathlib import Path
 
 # Allow running as `python scripts/run_data_validation.py` from the project root
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from data.loader import load_training_data, load_testing_data

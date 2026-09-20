@@ -114,8 +114,7 @@ Analysis           2000
 Backdoor           1746
 Shellcode          1133
 Worms               130
-[FAIL] Configured class(es) not found in dataset (check exact spelling in config/classes.yaml): ['Backdoors']
-[WARN] Class(es) found in dataset but not listed in classes.yaml: ['Backdoor']
+[OK]   All configured known/future-unknown classes found in the dataset
 ======================================================================
-Validation complete. Issues flagged: 2
+Validation complete. Issues flagged: 0
 ======================================================================

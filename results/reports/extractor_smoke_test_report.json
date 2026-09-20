@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-09-07T16:33:14",
+  "timestamp": "2026-09-20T14:33:41",
   "batch_size": 8,
   "packets_per_flow": 12,
   "view_shapes": {
@@ -26,8 +26,8 @@
     "pooling": "avg"
   },
   "model_parameters": {
-    "total": 204687,
-    "trainable": 204687
+    "total": 222090,
+    "trainable": 222090
   },
   "output_shapes": {
     "ip_features": [
@@ -43,6 +43,6 @@
       128
     ]
   },
-  "forward_pass_ms_avg": 125.98,
+  "forward_pass_ms_avg": 21.14,
   "status": "PASS"
 }

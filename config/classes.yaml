@@ -19,7 +19,7 @@ known_classes:
 
 future_unknown_classes:
   - Analysis
-  - Backdoors
+  - Backdoor
   - Reconnaissance
   - Shellcode
   - Worms

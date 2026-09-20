@@ -38,3 +38,7 @@ flake8>=7.0,<8.0
 # --- Notebooks (needed to run the notebooks/ files in VS Code / Jupyter) ---
 jupyter>=1.0,<2.0
 ipykernel>=6.29,<7.0
+
+# --- Dashboard & Demo ---
+streamlit>=1.30.0
+
