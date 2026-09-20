@@ -7,7 +7,7 @@ readme = "README.md"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["src*"]
+include = ["src*", "backend*"]
 
 [tool.black]
 line-length = 100
