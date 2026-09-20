@@ -94,7 +94,7 @@ class SimulationService:
         self.is_paused = False
 
         if self.task is None or self.task.done():
-            self.task = asyncio.create_task(self._simulation_loop())
+            self.task = asyncio.ensure_future(self._simulation_loop())
 
     def pause(self):
         self.is_paused = True

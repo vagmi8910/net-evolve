@@ -7,6 +7,7 @@ RoNeTC+ evidential inference, incident management, zero-day discovery,
 and continual learning.
 """
 from __future__ import annotations
+import asyncio
 import json
 from pathlib import Path
 from typing import Dict, List, Optional, Any
