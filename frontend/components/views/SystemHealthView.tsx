@@ -100,10 +100,10 @@ export function SystemHealthView({
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-950">
             System Health
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm sm:text-base text-gray-500 mt-1.5 font-normal">
             Operational status of gateway infrastructure, PyTorch inference worker, and streaming ring buffer.
           </p>
         </div>
@@ -210,10 +210,10 @@ export function SystemHealthView({
       {/* Resource Utilization Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-2">
-          <span className="text-gray-500 text-xs font-medium block">PROCESS MEMORY (RSS)</span>
+          <span className="text-gray-500 text-xs font-semibold block uppercase tracking-wider">PROCESS MEMORY (RSS)</span>
           <div className="flex items-baseline space-x-1.5">
-            <span className="text-2xl font-semibold text-gray-900">182.4</span>
-            <span className="text-xs text-gray-500">MB</span>
+            <span className="text-2xl sm:text-3xl font-bold text-gray-950 tracking-tight">182.4</span>
+            <span className="text-xs text-gray-500 font-medium">MB</span>
           </div>
           <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
             <div className="bg-[#007AFF] h-full w-[22%]" />
@@ -222,10 +222,10 @@ export function SystemHealthView({
         </div>
 
         <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-2">
-          <span className="text-gray-500 text-xs font-medium block">INFERENCE CPU LOAD</span>
+          <span className="text-gray-500 text-xs font-semibold block uppercase tracking-wider">INFERENCE CPU LOAD</span>
           <div className="flex items-baseline space-x-1.5">
-            <span className="text-2xl font-semibold text-emerald-600">4.8%</span>
-            <span className="text-xs text-gray-500">Avg</span>
+            <span className="text-2xl sm:text-3xl font-bold text-emerald-600 tracking-tight">4.8%</span>
+            <span className="text-xs text-gray-500 font-medium">Avg</span>
           </div>
           <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
             <div className="bg-emerald-500 h-full w-[12%]" />
@@ -234,10 +234,10 @@ export function SystemHealthView({
         </div>
 
         <div className="rounded-2xl border border-[#E5E7EB] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04)] space-y-2">
-          <span className="text-gray-500 text-xs font-medium block">SOCKET RING BUFFER</span>
+          <span className="text-gray-500 text-xs font-semibold block uppercase tracking-wider">SOCKET RING BUFFER</span>
           <div className="flex items-baseline space-x-1.5">
-            <span className="text-2xl font-semibold text-[#007AFF]">100 / 100</span>
-            <span className="text-xs text-gray-500">Slots</span>
+            <span className="text-2xl sm:text-3xl font-bold text-[#007AFF] tracking-tight">100 / 100</span>
+            <span className="text-xs text-gray-500 font-medium">Slots</span>
           </div>
           <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
             <div className="bg-[#007AFF] h-full w-[100%]" />

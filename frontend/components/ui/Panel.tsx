@@ -25,12 +25,12 @@ export function Panel({
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 pb-4 mb-5">
           <div>
             {title && (
-              <h3 className="text-[15px] font-semibold text-gray-900">
+              <h3 className="text-[17px] sm:text-lg font-bold text-gray-950 tracking-tight">
                 {title}
               </h3>
             )}
             {subtitle && (
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">
                 {subtitle}
               </p>
             )}

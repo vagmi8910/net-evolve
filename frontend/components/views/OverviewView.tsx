@@ -95,10 +95,10 @@ export function OverviewView({
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-950">
             Security Overview
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm sm:text-base text-gray-500 mt-1.5 font-normal">
             Real-time visibility across monitored network traffic and model-rejected zero-day threats.
           </p>
         </div>
@@ -165,10 +165,10 @@ export function OverviewView({
         <div className="lg:col-span-8 rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] flex flex-col justify-between">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
             <div>
-              <h3 className="text-[15px] font-semibold text-gray-900">
+              <h3 className="text-[17px] sm:text-lg font-bold text-gray-950 tracking-tight">
                 Network Activity
               </h3>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">
                 Volumetric distribution of inspected traffic
               </p>
             </div>
@@ -301,7 +301,7 @@ export function OverviewView({
         <div className="lg:col-span-4 rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)] flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
-              <h3 className="text-[15px] font-semibold text-gray-900">
+              <h3 className="text-[17px] sm:text-lg font-bold text-gray-950 tracking-tight">
                 Security Posture
               </h3>
               <span className="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 border border-emerald-200/80">
@@ -365,10 +365,10 @@ export function OverviewView({
         <div className="lg:col-span-4 rounded-2xl border border-[#E5E7EB] bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
           <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
             <div>
-              <h3 className="text-[15px] font-semibold text-gray-900">
+              <h3 className="text-[17px] sm:text-lg font-bold text-gray-950 tracking-tight">
                 Threat Distribution
               </h3>
-              <p className="text-xs text-gray-500 mt-0.5">
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">
                 Classified categories across flows
               </p>
             </div>
@@ -412,10 +412,10 @@ export function OverviewView({
           <div>
             <div className="flex items-center justify-between border-b border-gray-100 pb-3 mb-4">
               <div>
-                <h3 className="text-[15px] font-semibold text-gray-900">
+                <h3 className="text-[17px] sm:text-lg font-bold text-gray-950 tracking-tight">
                   Recent Security Events
                 </h3>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="text-xs sm:text-sm text-gray-500 mt-1">
                   Latest evaluated flows in RoNeTC+ gateway
                 </p>
               </div>

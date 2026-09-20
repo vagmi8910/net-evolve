@@ -72,7 +72,7 @@ export function EventDetailDrawer({
               </div>
               <div>
                 <div className="flex items-center space-x-2">
-                  <span className="font-semibold text-sm text-gray-900">
+                  <span className="font-bold text-base text-gray-950">
                     Flow Investigation
                   </span>
                   <DecisionBadge decision={event.decision.status} />
@@ -113,7 +113,7 @@ export function EventDetailDrawer({
 
             {/* Flow Metadata Section */}
             <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-4 space-y-3">
-              <div className="flex items-center space-x-2 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+              <div className="flex items-center space-x-2 text-xs font-bold text-gray-800 uppercase tracking-wider">
                 <Network className="h-3.5 w-3.5 text-[#007AFF]" />
                 <span>Flow Metadata</span>
               </div>
@@ -148,7 +148,7 @@ export function EventDetailDrawer({
             {/* Model Decision Section */}
             <div className="rounded-xl border border-gray-200 bg-white p-4 space-y-3 shadow-sm">
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2 text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                <div className="flex items-center space-x-2 text-xs font-bold text-gray-800 uppercase tracking-wider">
                   <Cpu className="h-3.5 w-3.5 text-[#007AFF]" />
                   <span>Model Decision</span>
                 </div>
@@ -185,10 +185,10 @@ export function EventDetailDrawer({
             {/* Multi-View Evidence Breakdown */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                <span className="text-xs font-bold text-gray-800 uppercase tracking-wider">
                   Multi-View Evidence Opinions
                 </span>
-                <span className="text-[11px] text-gray-400">Dempster-Shafer</span>
+                <span className="text-[11px] text-gray-500 font-medium">Dempster-Shafer</span>
               </div>
 
               <EvidenceMeter

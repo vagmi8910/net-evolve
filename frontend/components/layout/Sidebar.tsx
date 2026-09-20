@@ -85,10 +85,10 @@ export function Sidebar({
           </div>
           {!isCollapsed && (
             <div className="flex flex-col truncate">
-              <span className="text-[14px] font-semibold text-gray-900 tracking-tight leading-tight">
+              <span className="text-[15px] font-bold text-gray-950 tracking-wider leading-tight">
                 NETEVOLVE
               </span>
-              <span className="text-[12px] text-gray-500 font-normal leading-tight">
+              <span className="text-[12px] text-gray-500 font-medium leading-tight">
                 Security
               </span>
             </div>
@@ -114,7 +114,7 @@ export function Sidebar({
         {sections.map((section) => (
           <div key={section.title} className="space-y-1">
             {!isCollapsed && (
-              <h3 className="px-2 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
+              <h3 className="px-2 text-[11px] font-bold uppercase tracking-wider text-gray-400">
                 {section.title}
               </h3>
             )}

@@ -41,10 +41,10 @@ export function SettingsView({ onResetDemo }: SettingsViewProps) {
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-950">
             Settings
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm sm:text-base text-gray-500 mt-1.5 font-normal">
             Gateway detection sensitivity, open-set decision thresholds, and application preferences.
           </p>
         </div>

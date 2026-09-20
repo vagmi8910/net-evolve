@@ -61,7 +61,7 @@ export function Topbar({
         <span className="text-gray-300">/</span>
         <span className="text-gray-500 font-normal">{current.section}</span>
         <span className="text-gray-300">/</span>
-        <span className="text-gray-900 font-medium">{current.title}</span>
+        <span className="text-gray-950 font-bold">{current.title}</span>
       </div>
 
       {/* Center/Right Actions */}

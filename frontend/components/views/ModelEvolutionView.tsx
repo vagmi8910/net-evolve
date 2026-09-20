@@ -83,10 +83,10 @@ export function ModelEvolutionView({ onUpdateCompleted }: ModelEvolutionViewProp
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-950">
             Model Evolution
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm sm:text-base text-gray-500 mt-1.5 font-normal">
             Safely expand the detection model as new threat classes are discovered.
           </p>
         </div>
@@ -283,27 +283,27 @@ export function ModelEvolutionView({ onUpdateCompleted }: ModelEvolutionViewProp
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-4">
-            <span className="text-xs text-gray-500 block">Historical class retention</span>
-            <span className="text-2xl font-semibold text-emerald-600 mt-1 block">74.00%</span>
-            <span className="text-xs text-gray-400 mt-0.5 block">Identical to baseline model</span>
+            <span className="text-xs font-semibold text-gray-500 block uppercase tracking-wider">Historical class retention</span>
+            <span className="text-2xl sm:text-3xl font-bold text-emerald-600 mt-1 block tracking-tight">74.00%</span>
+            <span className="text-xs text-gray-500 mt-0.5 block font-medium">Identical to baseline model</span>
           </div>
 
           <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-4">
-            <span className="text-xs text-gray-500 block">New class accuracy</span>
-            <span className="text-2xl font-semibold text-[#007AFF] mt-1 block">53.00%</span>
-            <span className="text-xs text-gray-400 mt-0.5 block">Analysis & Backdoor</span>
+            <span className="text-xs font-semibold text-gray-500 block uppercase tracking-wider">New class accuracy</span>
+            <span className="text-2xl sm:text-3xl font-bold text-[#007AFF] mt-1 block tracking-tight">53.00%</span>
+            <span className="text-xs text-gray-500 mt-0.5 block font-medium">Analysis & Backdoor</span>
           </div>
 
           <div className="rounded-xl border border-emerald-200 bg-emerald-50/30 p-4">
-            <span className="text-xs text-emerald-800 font-medium block">Catastrophic forgetting</span>
-            <span className="text-2xl font-semibold text-emerald-700 mt-1 block">0.00%</span>
-            <span className="text-xs text-emerald-600 mt-0.5 block">Zero knowledge lost</span>
+            <span className="text-xs font-semibold text-emerald-800 block uppercase tracking-wider">Catastrophic forgetting</span>
+            <span className="text-2xl sm:text-3xl font-bold text-emerald-700 mt-1 block tracking-tight">0.00%</span>
+            <span className="text-xs text-emerald-600 mt-0.5 block font-medium">Zero knowledge lost</span>
           </div>
 
           <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-4">
-            <span className="text-xs text-gray-500 block">Training duration</span>
-            <span className="text-2xl font-semibold text-gray-900 mt-1 block">3.2 s</span>
-            <span className="text-xs text-gray-400 mt-0.5 block">vs 45 min full retraining</span>
+            <span className="text-xs font-semibold text-gray-500 block uppercase tracking-wider">Training duration</span>
+            <span className="text-2xl sm:text-3xl font-bold text-gray-950 mt-1 block tracking-tight">3.2 s</span>
+            <span className="text-xs text-gray-500 mt-0.5 block font-medium">vs 45 min full retraining</span>
           </div>
         </div>
       </div>

@@ -123,10 +123,10 @@ export function LiveTrafficView({
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-950">
             Live Traffic
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm sm:text-base text-gray-500 mt-1.5 font-normal">
             Real-time inspection of network flows through RoNeTC+ evidential evaluation.
           </p>
         </div>
