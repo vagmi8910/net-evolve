@@ -124,7 +124,7 @@ class SimStartRequest(BaseModel):
 
 
 @app.post("/api/simulation/start")
-def start_simulation(req: SimStartRequest):
+async def start_simulation(req: SimStartRequest):
     sim_svc.start(speed=req.speed, unknown_rate=req.unknown_rate, scenario=req.scenario)
     return {"status": "STARTED", "details": sim_svc.get_status()}
 
@@ -220,7 +220,7 @@ def get_category_seeds(category: str):
 
 
 @app.post("/api/demo/seeds/{seed_id}/run", response_model=TrafficEvent)
-def run_seed_attack(seed_id: str):
+async def run_seed_attack(seed_id: str):
     seeds = seed_registry.get("seeds", {})
     if seed_id not in seeds:
         raise HTTPException(status_code=404, detail=f"Seed ID '{seed_id}' not found.")
@@ -263,18 +263,17 @@ def run_seed_attack(seed_id: str):
 
     # Broadcast seed event to live websockets
     try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            asyncio.create_task(sim_svc.broadcast({
-                "type": "TRAFFIC_EVENT",
-                "event": event.model_dump(),
-                "metrics": sim_svc.get_status(),
-                "incident": incident.model_dump() if incident else None,
-            }))
+        asyncio.ensure_future(sim_svc.broadcast({
+            "type": "TRAFFIC_EVENT",
+            "event": event.model_dump(),
+            "metrics": sim_svc.get_status(),
+            "incident": incident.model_dump() if incident else None,
+        }))
     except Exception:
         pass
 
     return event
+
 
 
 # -------------------------------------------------------------
