@@ -144,6 +144,10 @@ export default function SOCDashboardPage() {
 
       {activeTab === "continual" && (
         <ModelEvolutionView
+          metrics={metrics}
+          incidents={incidents}
+          onStartSimulation={() => startSimulation(1.0, 0.05, "Mixed Enterprise Profile")}
+          onRunAttackStorm={handleRunAttackStorm}
           onUpdateCompleted={() => {
             refreshIncidents();
           }}

@@ -54,8 +54,8 @@ def compute_clustering_metrics(
 ) -> Dict[str, Any]:
     """Computes intrinsic and extrinsic clustering evaluation metrics."""
     metrics: Dict[str, Any] = {
-        "n_samples": int(len(embeddings)),
-        "n_clusters": int(len(np.unique(cluster_labels[cluster_labels >= 0]))),
+        "n_samples": len(embeddings),
+        "n_clusters": len(np.unique(cluster_labels[cluster_labels >= 0])),
         "n_noise": int(np.sum(cluster_labels == -1)),
     }
 
@@ -64,7 +64,7 @@ def compute_clustering_metrics(
     if np.sum(valid_mask) > metrics["n_clusters"] > 1:
         try:
             metrics["silhouette_score"] = float(
-                silhouette_score(embeddings[valid_mask], cluster_labels[valid_mask])
+                silhouette_score(embeddings[valid_mask], cluster_labels[valid_mask])  # type: ignore
             )
         except Exception as e:
             logger.warning(f"Could not compute silhouette score: {e}")
@@ -74,9 +74,11 @@ def compute_clustering_metrics(
 
     # Extrinsic metrics against ground-truth unknown classes
     if true_labels is not None:
-        metrics["adjusted_rand_index"] = float(adjusted_rand_score(true_labels, cluster_labels))
+        metrics["adjusted_rand_index"] = float(
+            adjusted_rand_score(true_labels, cluster_labels)  # type: ignore
+        )
         metrics["normalized_mutual_info"] = float(
-            normalized_mutual_info_score(true_labels, cluster_labels)
+            normalized_mutual_info_score(true_labels, cluster_labels)  # type: ignore
         )
         metrics["cluster_purity"] = compute_cluster_purity(true_labels, cluster_labels)
 
@@ -99,7 +101,7 @@ class NovelTrafficClusterer:
         self.eps = eps
         self.min_samples = min_samples
         self.random_state = random_state
-        self.model = None
+        self.model: Any = None
 
     def fit_predict(self, embeddings: np.ndarray) -> np.ndarray:
         """Fits clustering algorithm on embeddings and returns cluster labels."""
@@ -113,20 +115,20 @@ class NovelTrafficClusterer:
                 random_state=self.random_state,
                 n_init="auto",
             )
-            labels = self.model.fit_predict(embeddings)
+            labels = self.model.fit_predict(embeddings)  # type: ignore
         elif self.algorithm == "dbscan":
             self.model = DBSCAN(eps=self.eps, min_samples=self.min_samples)
-            labels = self.model.fit_predict(embeddings)
+            labels = self.model.fit_predict(embeddings)  # type: ignore
         elif self.algorithm == "hdbscan":
             try:
-                import hdbscan
+                import hdbscan  # type: ignore[import-not-found]
                 self.model = hdbscan.HDBSCAN(min_cluster_size=self.min_samples)
-                labels = self.model.fit_predict(embeddings)
+                labels = np.asarray(self.model.fit_predict(embeddings))
             except ImportError:
                 logger.warning("hdbscan package not installed. Falling back to DBSCAN.")
                 self.model = DBSCAN(eps=self.eps, min_samples=self.min_samples)
-                labels = self.model.fit_predict(embeddings)
+                labels = self.model.fit_predict(embeddings)  # type: ignore
         else:
             raise ValueError(f"Unknown clustering algorithm: {self.algorithm}")
 
-        return labels
+        return np.asarray(labels)

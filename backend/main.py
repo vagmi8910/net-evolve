@@ -251,14 +251,7 @@ async def run_seed_attack(seed_id: str):
     )
 
     # Record into simulation buffer & incident store
-    sim_svc.events_buffer.append(event)
-    sim_svc.total_flows += 1
-    if event.open_set.is_unknown:
-        sim_svc.unknown_count += 1
-        sim_svc.blocked_count += 1
-    else:
-        sim_svc.known_count += 1
-    sim_svc.threat_counts[event.prediction.label] += 1
+    sim_svc.record_traffic_event(event)
 
     incident = incident_svc.process_event(event)
 
@@ -317,10 +310,102 @@ def trigger_discovery_run(algorithm: str = "kmeans", n_clusters: int = 5):
 # -------------------------------------------------------------
 # CONTINUAL LEARNING / MODEL EVOLUTION
 # -------------------------------------------------------------
+class ContinualLearningRequest(BaseModel):
+    classes: Optional[List[str]] = None
+
+
+@app.get("/api/continual-learning/candidates")
+def get_continual_learning_candidates():
+    """Returns candidate threat classes that have actually arrived in traffic so far, excluding base known classes."""
+    # Ensure any events in buffer are recorded into traffic_risks
+    for ev in sim_svc.events_buffer:
+        sim_svc.record_risk_from_event(ev)
+
+    for inc in incident_svc.incidents.values():
+        cat = inc.attack_category
+        # Extract pure category name if format is 'Candidate: XYZ-like'
+        if cat.startswith("Candidate: ") and cat.endswith("-like"):
+            pure_cat = cat[len("Candidate: "):-len("-like")].strip()
+        else:
+            pure_cat = cat.strip()
+        if pure_cat and pure_cat.upper() not in ["NORMAL", "POTENTIAL ZERO-DAY", "UNKNOWN"]:
+            if pure_cat not in sim_svc.traffic_risks:
+                sim_svc.traffic_risks[pure_cat] = {
+                    "name": pure_cat,
+                    "count": inc.occurrences,
+                    "first_seen": inc.first_seen,
+                    "last_seen": inc.last_seen,
+                    "sample_event_id": inc.event_ids[0] if inc.event_ids else "",
+                }
+
+    base_set = set(inference_svc.base_known)
+    active_set = set(inference_svc.current_classes)
+
+    meta_info = {
+        "Analysis": {
+            "description": "Web vulnerability probing, port scanning & directory traversal",
+            "severity": "HIGH",
+            "cluster_hint": "Cluster 3 (Web Scanning)",
+        },
+        "Backdoor": {
+            "description": "Stealthy C2 beaconing & persistent remote access channel",
+            "severity": "CRITICAL",
+            "cluster_hint": "Cluster 1 (C2 Beaconing)",
+        },
+        "Reconnaissance": {
+            "description": "Rapid horizontal port scanning, SYN sweeps & ICMP probes",
+            "severity": "MEDIUM",
+            "cluster_hint": "Cluster 0 (Recon Sweep)",
+        },
+        "Shellcode": {
+            "description": "In-memory exploit injection targeting buffer overflows",
+            "severity": "CRITICAL",
+            "cluster_hint": "Cluster 2 (Exploit Injection)",
+        },
+        "Worms": {
+            "description": "Self-propagating lateral movement across internal subnet",
+            "severity": "CRITICAL",
+            "cluster_hint": "Cluster 4 (Worm Propagation)",
+        },
+    }
+
+    candidates = []
+    for risk_name, data in sim_svc.traffic_risks.items():
+        if risk_name in base_set or risk_name.upper() in ["NORMAL", "UNKNOWN"]:
+            continue
+        info = meta_info.get(risk_name, {
+            "description": f"Observed zero-day threat class ({risk_name}) from network traffic",
+            "severity": "HIGH",
+            "cluster_hint": "Discovered Traffic Cluster",
+        })
+        candidates.append({
+            "name": risk_name,
+            "count": data.get("count", 1),
+            "first_seen": data.get("first_seen", ""),
+            "last_seen": data.get("last_seen", ""),
+            "is_learned": risk_name in active_set,
+            "description": info["description"],
+            "severity": info["severity"],
+            "cluster_hint": info["cluster_hint"],
+        })
+
+    # Sort so unlearned candidates come first, then by count descending
+    candidates.sort(key=lambda c: (c["is_learned"], -c["count"], c["name"]))
+
+    return {
+        "candidates": candidates,
+        "total_traffic_flows": sim_svc.total_flows,
+        "active_classes": list(inference_svc.current_classes),
+        "discovered_classes": list(inference_svc.learned_attacks),
+        "is_expanded": inference_svc.is_expanded,
+    }
+
+
 @app.post("/api/continual-learning/start", response_model=ContinualUpdateResponse)
-def start_continual_learning():
+def start_continual_learning(req: Optional[ContinualLearningRequest] = None):
     try:
-        return continual_svc.execute_continual_update()
+        selected_classes = req.classes if (req and req.classes) else None
+        return continual_svc.execute_continual_update(new_classes=selected_classes)
     except Exception as exc:
         import traceback
         raise HTTPException(status_code=500, detail=f"{type(exc).__name__}: {exc}\n{traceback.format_exc()}")

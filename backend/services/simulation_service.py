@@ -50,6 +50,7 @@ class SimulationService:
         # Time-bucketed volume counters (HH:MM -> count)
         self.volume_history: collections.deque[Dict[str, Any]] = collections.deque(maxlen=30)
         self.threat_counts: Dict[str, int] = collections.defaultdict(int)
+        self.traffic_risks: Dict[str, Dict[str, Any]] = {}
         self.uncertainty_bins: List[int] = [0] * 10  # 0.0-0.1, 0.1-0.2, ... 0.9-1.0
 
     @classmethod
@@ -122,7 +123,40 @@ class SimulationService:
         self.latencies.clear()
         self.volume_history.clear()
         self.threat_counts.clear()
+        self.traffic_risks.clear()
         self.uncertainty_bins = [0] * 10
+
+    def record_risk_from_event(self, event: TrafficEvent):
+        """Records traffic risk from an event if it is a threat class."""
+        risk = event.ground_truth or event.prediction.label
+        if not risk or risk.upper() in ["NORMAL", "UNKNOWN"]:
+            return
+        risk_name = risk
+        now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        if risk_name not in self.traffic_risks:
+            self.traffic_risks[risk_name] = {
+                "name": risk_name,
+                "count": 0,
+                "first_seen": now_str,
+                "last_seen": now_str,
+                "sample_event_id": event.event_id,
+            }
+        self.traffic_risks[risk_name]["count"] += 1
+        self.traffic_risks[risk_name]["last_seen"] = now_str
+
+    def record_traffic_event(self, event: TrafficEvent):
+        """Records an external traffic event (such as a demo seed attack) into metrics and buffers."""
+        self.events_buffer.append(event)
+        self.total_flows += 1
+        if event.open_set.is_unknown:
+            self.unknown_count += 1
+            self.blocked_count += 1
+        elif event.decision.status == "SUSPICIOUS":
+            self.suspicious_count += 1
+        else:
+            self.known_count += 1
+        self.threat_counts[event.prediction.label] += 1
+        self.record_risk_from_event(event)
 
     def get_status(self) -> Dict[str, Any]:
         avg_lat = sum(self.latencies) / len(self.latencies) if self.latencies else 12.4
@@ -140,6 +174,7 @@ class SimulationService:
             "avg_latency_ms": round(avg_lat, 2),
             "active_connections": len(self.connected_websockets),
             "threat_distribution": dict(self.threat_counts),
+            "traffic_risks": dict(self.traffic_risks),
             "uncertainty_histogram": self.uncertainty_bins,
             "volume_history": list(self.volume_history),
         }
@@ -192,6 +227,7 @@ class SimulationService:
                 self.known_count += 1
 
             self.threat_counts[event.prediction.label] += 1
+            self.record_risk_from_event(event)
 
             # Binned uncertainty
             u_idx = min(int(event.open_set.uncertainty * 10), 9)

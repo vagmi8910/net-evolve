@@ -102,17 +102,17 @@ class InferenceService:
 
     def expand_model_incremental(self, new_classes: List[str]):
         """Expands classifier heads for continually learned classes. Safe to call multiple times."""
-        if self.is_expanded:
-            # Already expanded — just return current state, don't expand again
+        classes_to_add = [c for c in new_classes if c not in self.current_classes]
+        if not classes_to_add:
             return
 
         from incremental.continual_learner import expand_classifier_head
-        num_new = len(new_classes)
+        num_new = len(classes_to_add)
         expand_classifier_head(self.model, num_new_classes=num_new)
 
-        # Load incremental checkpoint if adding Analysis & Backdoor
+        # Load incremental checkpoint if adding Analysis & Backdoor from base
         inc_ckpt = ROOT_DIR / "models" / "ronetc" / "incremental_model.pt"
-        if inc_ckpt.exists() and set(new_classes) == {"Analysis", "Backdoor"}:
+        if inc_ckpt.exists() and set(self.current_classes) == set(self.base_known) and set(classes_to_add) == {"Analysis", "Backdoor"}:
             # strict=False allows loading even if output head shapes differ slightly
             self.model.load_state_dict(
                 torch.load(inc_ckpt, map_location="cpu", weights_only=False),
@@ -120,10 +120,9 @@ class InferenceService:
             )
 
         self.model.eval()
-        for c in new_classes:
-            if c not in self.current_classes:
-                self.current_classes.append(c)
-                self.learned_attacks.append(c)
+        for c in classes_to_add:
+            self.current_classes.append(c)
+            self.learned_attacks.append(c)
         self.is_expanded = True
 
     def classify_single_tensor(
@@ -284,8 +283,8 @@ class InferenceService:
                 "dest_port": dst_port,
                 "protocol": "TCP" if lbl in ["Backdoor", "Shellcode", "Worms"] else np.random.choice(["TCP", "UDP", "ICMP"]),
                 "service": "http" if dst_port in [80, 8080] else ("ssl" if dst_port == 443 else "-"),
-                "packets": int(np.random.randint(24, 250)),
-                "bytes": int(np.random.randint(8192, 128000)),
+                "packets": np.random.randint(24, 250),
+                "bytes": np.random.randint(8192, 128000),
                 "duration": round(float(np.random.uniform(0.1, 4.5)), 3),
             }
             return ip, tr, pay, lbl, meta
@@ -309,8 +308,8 @@ class InferenceService:
                 "dest_port": dst_port,
                 "protocol": "UDP" if dst_port == 53 else "TCP",
                 "service": "dns" if dst_port == 53 else ("http" if dst_port == 80 else "ssl"),
-                "packets": int(np.random.randint(2, 45)),
-                "bytes": int(np.random.randint(256, 18400)),
+                "packets": np.random.randint(2, 45),
+                "bytes": np.random.randint(256, 18400),
                 "duration": round(float(np.random.uniform(0.001, 1.2)), 3),
             }
             return ip, tr, pay, lbl, meta

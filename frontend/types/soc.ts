@@ -145,6 +145,25 @@ export interface ContinualUpdateStep {
   detail: string;
 }
 
+export interface CandidateRisk {
+  name: string;
+  count: number;
+  first_seen: string;
+  last_seen: string;
+  is_learned: boolean;
+  description: string;
+  severity: "CRITICAL" | "HIGH" | "MEDIUM" | "LOW";
+  cluster_hint?: string;
+}
+
+export interface ContinualCandidatesResponse {
+  candidates: CandidateRisk[];
+  total_traffic_flows: number;
+  active_classes: string[];
+  discovered_classes: string[];
+  is_expanded: boolean;
+}
+
 export interface ContinualUpdateResponse {
   success: boolean;
   status: string;
@@ -170,6 +189,7 @@ export interface SimStatus {
   avg_latency_ms: number;
   active_connections: number;
   threat_distribution: Record<string, number>;
+  traffic_risks?: Record<string, { name: string; count: number; first_seen: string; last_seen: string }>;
   uncertainty_histogram: number[];
   volume_history: Array<{ time: string; known: number; unknown: number; total: number }>;
 }

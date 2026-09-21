@@ -100,3 +100,38 @@ def test_continual_learning_flow():
     # Reset back to base
     reset_res = client.post("/api/continual-learning/reset")
     assert reset_res.status_code == 200
+
+
+def test_continual_learning_candidate_selection():
+    # Reset simulation and model
+    client.post("/api/simulation/reset")
+
+    # Before traffic, candidates for novel classes should be empty
+    candidates_res = client.get("/api/continual-learning/candidates")
+    assert candidates_res.status_code == 200
+    candidates = candidates_res.json()["candidates"]
+    assert len(candidates) == 0
+
+    # Run a zero-day attack seed for Backdoor
+    seed_res = client.post("/api/demo/seeds/backdoor-001/run")
+    assert seed_res.status_code == 200
+
+    # Now Backdoor should be in candidates from traffic
+    candidates_res2 = client.get("/api/continual-learning/candidates")
+    assert candidates_res2.status_code == 200
+    cand_list = candidates_res2.json()["candidates"]
+    cand_names = [c["name"] for c in cand_list]
+    assert "Backdoor" in cand_names
+
+    # Incrementally learn ONLY Backdoor
+    learn_res = client.post("/api/continual-learning/start", json={"classes": ["Backdoor"]})
+    assert learn_res.status_code == 200
+    learn_data = learn_res.json()
+    assert learn_data["success"] is True
+    assert learn_data["total_classes"] == 6
+    assert "Backdoor" in learn_data["active_classes"]
+
+    # Reset model
+    reset_res = client.post("/api/continual-learning/reset")
+    assert reset_res.status_code == 200
+

@@ -1,8 +1,11 @@
 # NetEvolve: RoNeTC+ Multi-View Evidential Network Traffic Classification & Continual Zero-Day Discovery
 
-[![Python 3.11](https://img.shields.io/badge/Python-3.11-blue.svg)](https://www.python.org/)
-[![PyTorch 2.4](https://img.shields.io/badge/PyTorch-2.4-EE4C2C.svg)](https://pytorch.org/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-Dashboard-FF4B4B.svg)](https://streamlit.io/)
+[![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
+[![PyTorch 2.4](https://img.shields.io/badge/PyTorch-2.4-EE4C2C.svg?logo=pytorch&logoColor=white)](https://pytorch.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Next.js 16](https://img.shields.io/badge/Next.js-16-black.svg?logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC.svg?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Dataset: UNSW-NB15](https://img.shields.io/badge/Dataset-UNSW--NB15-brightgreen.svg)](https://research.unsw.edu.au/projects/unsw-nb15-dataset)
 
@@ -10,105 +13,132 @@
 
 ## 📌 Executive Summary
 
-**NetEvolve** is an end-to-end framework implementing **RoNeTC+** (*Robust Network Traffic Classifier Plus*), an adaptive open-set network intrusion detection and continual learning system. 
+**NetEvolve** is an enterprise-grade AI Network Detection and Response (NDR) platform powered by **RoNeTC+** (*Robust Network Traffic Classifier Plus*). It unifies multi-view deep neural networks, evidential uncertainty reasoning, unsupervised novel class discovery, and continual class-incremental learning into a real-time Security Operations Center (SOC) command console.
 
-Traditional Machine Learning and Deep Learning Network Intrusion Detection Systems (NIDS)—such as Random Forests and multi-layer perceptrons—operate under a closed-world assumption: they force every incoming flow into a predefined set of known categories. When exposed to unseen zero-day attacks or novel cyber-threats, legacy classifiers assign arbitrary labels with dangerously high confidence.
+Legacy Network Intrusion Detection Systems (NIDS)—including standard Random Forests, Multi-Layer Perceptrons, and Softmax-based Deep Neural Networks—rely on a **closed-world assumption**: they force every incoming network flow into fixed known categories. When confronted with novel zero-day attacks, traditional classifiers assign incorrect labels with dangerously high confidence.
 
-**RoNeTC+** addresses this vulnerability by uniting:
-1. **Multi-View Domain Feature Splicing** (IP, Transport, and Traffic Pattern views),
-2. **Evidential Deep Learning (Subjective Logic)** to quantify second-order Dirichlet uncertainty ($u = K / S$),
-3. **Dempster-Shafer Multi-View Evidence Fusion**,
-4. **Open-Set Zero-Day Rejection** via Youden's Index optimal thresholding ($\tau$),
-5. **Novel Class Discovery (NCD)** via latent embedding clustering, and
-6. **Class-Incremental Learning** with backbone feature freezing to integrate newly discovered zero-days with **0% catastrophic forgetting** of historical traffic.
+**RoNeTC+ eliminates this vulnerability through a six-pillar architecture:**
+1. **Multi-View Domain Feature Splicing**: Projects raw network packet headers and metadata into 3 domain views (IP, Transport, and Payload byte patterns) structured as $11 \times 11$ 2D spatial feature grids.
+2. **Evidential Deep Learning (Subjective Logic)**: Replaces heuristic Softmax with Dirichlet opinion generators that explicitly quantify second-order epistemic uncertainty ($u = K / S$) alongside class belief masses ($b_k$).
+3. **Dempster-Shafer Multi-View Fusion**: Fuses the three independent view opinions mathematically, automatically giving higher weight to views with lower uncertainty while rejecting adversarial spoofing.
+4. **Open-Set Zero-Day Rejection**: Calibrates an optimal decision threshold ($\tau = 0.1844$ via Youden's Index), allowing the gateway to safely reject and quarantine unrecognized zero-day flows ($u \ge \tau$) as `UNKNOWN`.
+5. **Novel Class Discovery (NCD)**: Pools high-uncertainty zero-day latent embeddings ($384$-dimensional) and applies unsupervised K-Means/DBSCAN clustering to identify novel threat clusters and correlate them against the **MITRE ATT&CK** matrix.
+6. **Dynamic Continual Incremental Learning**: Allows SOC operators to selectively expand the model's classifier heads to incorporate discovered traffic threats with **0.00% catastrophic forgetting** of historical knowledge and zero service downtime.
 
 ---
 
 ## 🔄 End-to-End System Pipeline
 
 ```
-                              [ Incoming Network Traffic Flow ]
-                                              │
-                      ┌───────────────────────┴───────────────────────┐
-                      ▼                                               ▼
-             [ Flow Normalizer ]                             [ Multi-View Splicer ]
-                      │                                               │
-                      ▼                                               ▼
-          [ 42 Tabular Features ]                        [ Spliced Tensor (12, 11, 11) ]
-                      │                                               │
-                      └───────────────────────┬───────────────────────┘
-                                              │
-                                              ▼
-                    ┌───────────────────────────────────────────────────┐
-                    │      RoNeTC Multi-View Feature Backbone           │
-                    │   ├── IP View CNN/MLP        (Dim: 128)           │
-                    │   ├── Transport View CNN/MLP (Dim: 128)           │
-                    │   └── Payload View CNN/MLP   (Dim: 128)           │
-                    └─────────────────────────┬─────────────────────────┘
-                                              │
-                                              ▼
-                    ┌───────────────────────────────────────────────────┐
-                    │            Subjective Logic Opinions              │
-                    │    Evidence: e_k = Softplus(logits)               │
-                    │    Dirichlet: α_k = e_k + 1, S = Σ α_k            │
-                    │    Belief: b_k = e_k / S, Uncertainty: u = K / S  │
-                    └─────────────────────────┬─────────────────────────┘
-                                              │
-                                              ▼
-                    ┌───────────────────────────────────────────────────┐
-                    │      Dempster-Shafer Multi-View Fusion Layer      │
-                    │        Produces Fused Belief & Fused u            │
-                    └─────────────────────────┬─────────────────────────┘
-                                              │
-                                              ▼
-                                    Is u >= Threshold (τ)?
-                                   /                      \
-                                  /                        \
-                       [ NO: u < τ ]                      [ YES: u >= τ ]
-                              │                                  │
-                              ▼                                  ▼
-                    [ Low Uncertainty ]                [ High Uncertainty ]
-                   Confident Prediction:             🚨 FLAGGED AS UNKNOWN (Zero-Day)
-                  Normal, DoS, Exploits,                         │
-                    Fuzzers, or Generic                          ▼
-                                                       [ Latent Embeddings Pool ]
-                                                                 │
-                                                                 ▼
-                                                       [ Novel Class Discovery ]
-                                                       K-Means / HDBSCAN Clustering
-                                                                 │
-                                                                 ▼
-                                                    Identified Zero-Day Threat:
-                                                      Cluster 1: Backdoor
-                                                      Cluster 2: Analysis
-                                                                 │
-                                                                 ▼
-                                                       [ Continual Learning ]
-                                                    - Freeze Feature Backbone
-                                                    - Expand Head: 5 ➔ 7 classes
-                                                    - Fast Fine-Tuning (0% Forgetting)
+                               [ Incoming Network Packet Flow ]
+                                               │
+                       ┌───────────────────────┴───────────────────────┐
+                       ▼                                               ▼
+              [ Flow Normalizer ]                             [ Multi-View Splicer ]
+           (42 Numerical/Cat Features)                    (3 Spatial Grids: 11x11)
+                       │                                               │
+                       └───────────────────────┬───────────────────────┘
+                                               │
+                                               ▼
+                     ┌───────────────────────────────────────────────────┐
+                     │      RoNeTC Multi-View Feature Backbone           │
+                     │   ├── IP View CNN/MLP        (Dim: 128)           │
+                     │   ├── Transport View CNN/MLP (Dim: 128)           │
+                     │   └── Payload View CNN/MLP   (Dim: 128)           │
+                     └─────────────────────────┬─────────────────────────┘
+                                               │
+                                               ▼
+                     ┌───────────────────────────────────────────────────┐
+                     │            Subjective Logic Opinions              │
+                     │    Evidence: e_k = Softplus(logits)               │
+                     │    Dirichlet: α_k = e_k + 1, S = Σ α_k            │
+                     │    Belief: b_k = e_k / S, Uncertainty: u = K / S  │
+                     └─────────────────────────┬─────────────────────────┘
+                                               │
+                                               ▼
+                     ┌───────────────────────────────────────────────────┐
+                     │      Dempster-Shafer Multi-View Fusion Layer      │
+                     │     Produces Fused Belief (b) & Fused u           │
+                     └─────────────────────────┬─────────────────────────┘
+                                               │
+                                               ▼
+                                     Is u >= Threshold (τ)?
+                                    /                      \
+                                   /                        \
+                        [ NO: u < τ ]                      [ YES: u >= τ ]
+                               │                                  │
+                               ▼                                  ▼
+                     [ Low Uncertainty ]                [ High Uncertainty ]
+                    Confident Prediction:             🚨 FLAGGED AS UNKNOWN (Zero-Day)
+                   Normal, DoS, Exploits,                         │
+                     Fuzzers, or Generic                          ▼
+                                                        [ Latent Embeddings Pool ]
+                                                                  │
+                                                                  ▼
+                                                        [ Novel Class Discovery ]
+                                                        K-Means / HDBSCAN (k = 5)
+                                                        MITRE ATT&CK Correlation
+                                                                  │
+                                                                  ▼
+                                                     Identified Zero-Day Threats:
+                                                      - Cluster 0: Reconnaissance
+                                                      - Cluster 1: Backdoor
+                                                      - Cluster 2: Shellcode
+                                                      - Cluster 3: Analysis
+                                                      - Cluster 4: Worms
+                                                                  │
+                                                                  ▼
+                                                  [ Traffic-Restricted Selection ]
+                                                  User selects verified traffic risks
+                                                                  │
+                                                                  ▼
+                                                      [ Continual Learning ]
+                                                  1. Freeze Multi-View Backbone
+                                                  2. Expand Linear Heads (K -> K_new)
+                                                  3. Dirichlet Exemplar Fine-Tuning
+                                                  4. Zero-Downtime Live Model Hot-Swap
+                                                  (0.00% Catastrophic Forgetting)
 ```
 
 ---
 
-## 📂 Complete Project Folder Structure
+## 🖥️ SOC Command Center Modules
+
+NetEvolve features an Apple/Linear-inspired enterprise web console built on **Next.js 16 App Router**, **TypeScript**, and **Tailwind CSS**, communicating with the **FastAPI** backend via REST and WebSockets:
+
+| Module | Purpose & Capabilities |
+| :--- | :--- |
+| **🌐 Overview Dashboard** | Executive threat posture, live KPI metrics (Total Flows, Known vs. Unknown ratio, Latency), threat category distribution, and recent high-uncertainty security alerts. |
+| **⚡ Live Traffic Telemetry** | Real-time WebSocket streaming (`/ws/traffic`) with Dempster-Shafer multi-view evidence inspection (IP, Transport, Payload breakdown), uncertainty gauge meters, and action filtering (Allowed / Suspicious / Blocked). |
+| **🛡️ Incident Management** | SOC triage queue with automated incident creation for zero-day flows, uncertainty severity scoring (Critical/High/Medium), deduplicated source IP grouping, and mitigation recommendations. |
+| **🔬 Zero-Day Discovery** | Unsupervised latent embedding clustering (K-Means, DBSCAN) with 2D PCA projection scatter plot, cluster purity metrics (Silhouette: `0.4415`, Purity: `77.4%`, NMI: `0.098`), and semantic attack profiling. |
+| **🎯 Threat Intelligence** | Automated MITRE ATT&CK mapping (`T1071.001` C2, `T1059` Shellcode, `T1046` Reconnaissance, `T1190` Analysis), targeted protocol monitoring (e.g. TCP/445 SMB), and correlated external adversary host pools. |
+| **🧠 Model Observability** | In-depth evidential parameter inspection: view Dirichlet belief distributions, uncertainty histograms, open-set decision threshold ($\tau = 0.1844$), and baseline benchmark metrics. |
+| **🧪 Replay Laboratory** | Deterministic security evaluation environment for replaying historical UNSW-NB15 splits with customizable volume, playback speed (1x–10x), zero-day injection ratio, and CSV report export. |
+| **💥 Demo Attack Lab** | Interactive zero-day sandbox with 150 pre-calibrated attack seeds (Normal, Backdoor, Analysis, Reconnaissance, Shellcode, Worms) and single-click multi-vector Attack Storm injection. |
+| **🔄 Model Evolution** | **Selective Continual Learning:** Displays only the novel risk classes that have actually arrived in traffic so far. Users select which classes to increment, trigger the 7-step pipeline, and can revert to the 5-class baseline at any time. |
+
+---
+
+## 📂 Complete Project Structure
 
 ```
 NetEvolve/
 ├── README.md                               # Comprehensive Project Technical Documentation
-├── RoNeTC_Plus_Project_Technical_Report.pdf# Full IEEE-formatted Project Report & Empirical Analysis
 ├── pyproject.toml                          # Project configuration & package build metadata
-├── requirements.txt                        # Strict dependency pinout (PyTorch, Scikit-Learn, Streamlit, etc.)
+├── pyrightconfig.json                      # Pyright / IDE strict type checking configuration
+├── requirements.txt                        # Strict dependency pinout (PyTorch, FastAPI, Scikit-Learn)
 │
 ├── backend/                                # FastAPI Enterprise Security Gateway
-│   ├── main.py                             # API routing, WebSockets (/ws/traffic), CORS, health
-│   ├── schemas/                            # Pydantic schemas (traffic, incident, discovery, model)
+│   ├── main.py                             # API routes, WebSockets (/ws/traffic), CORS, health
+│   ├── schemas/                            # Pydantic validation schemas (traffic, incident, discovery, model)
 │   ├── services/                           # Inference, simulation, incidents, discovery, continual services
-│   └── tests/                              # Automated PyTest API test suite
+│   └── tests/                              # Automated PyTest API test suite (9 test cases)
 │
 ├── frontend/                               # Next.js 16 App Router TypeScript SOC Console
 │   ├── app/                                # Layout, styling, master SOC dashboard page
 │   ├── components/                         # Command navbar, Overview, Live Traffic, Demo Lab, Incidents, etc.
+│   │   └── views/                          # Modular view components (ModelEvolutionView, ReplayLabView, etc.)
 │   ├── hooks/                              # useSocStream WebSocket real-time connection hook
 │   ├── lib/                                # Type-safe API client (api.ts)
 │   └── types/                              # Strict TypeScript interfaces (soc.ts)
@@ -120,161 +150,66 @@ NetEvolve/
 ├── data/                                   # Data Directory & Ingestion Pipelines
 │   ├── raw/                                # Original UNSW-NB15 CSV datasets
 │   │   ├── UNSW_NB15_training-set.csv      # Train split (175,341 raw flows)
-│   │   ├── UNSW_NB15_testing-set.csv       # Test split (82,332 raw flows)
-│   │   └── README.md                       # Data dictionary & column descriptions
-│   ├── interim/                            # Intermediate cleaned flow batches
+│   │   └── UNSW_NB15_testing-set.csv       # Test split (82,332 raw flows)
+│   ├── demo/                               # Demo seed registry
+│   │   └── demo_seed_registry.json         # 150 verified attack and normal flow seeds
 │   └── processed/                          # Scaled, one-hot encoded, and partitioned arrays
 │       ├── X_train.npy                     # Scaled training feature matrix
 │       ├── y_train.npy                     # Numerical encoded training labels
-│       ├── X_val.npy                       # Validation feature matrix
-│       ├── y_val.npy                       # Validation encoded labels
 │       ├── X_test_known.npy                # Closed-set evaluation test matrix
-│       ├── y_test_known.npy                # Closed-set test labels
-│       ├── multiview/                      # Spliced multi-view tensor partitions
-│       └── processed_metadata.json         # Dataset transformation shapes and statistics
+│       └── multiview/                      # Spliced multi-view tensor partitions (test_known, test_unknown)
 │
 ├── models/                                 # Serialized Checkpoints & Encoders
 │   ├── preprocessor.joblib                 # Scikit-learn ColumnTransformer (StandardScaler + OneHotEncoder)
 │   ├── label_encoder.joblib                # LabelEncoder mapping string categories to integer IDs
 │   ├── baseline/                           # Serialized Random Forest baseline model
-│   ├── neural/                             # Latent embedding baseline neural network
-│   │   └── model_metadata.json             # Baseline model architecture metadata
 │   └── ronetc/                             # RoNeTC+ Core PyTorch Checkpoints
 │       ├── best_model.pt                   # Optimal base model weights (5 closed-set classes)
 │       └── incremental_model.pt            # Continually updated model weights (7 classes expanded)
 │
-├── results/                                # Empirical Artifacts & Benchmarks
-│   ├── figures/                            # Confusion matrices and learning trajectories
-│   │   ├── baseline_confusion_matrix_test.png
-│   │   ├── baseline_confusion_matrix_val.png
-│   │   ├── neural_accuracy_curve.png
-│   │   ├── neural_confusion_matrix_test.png
-│   │   ├── neural_confusion_matrix_val.png
-│   │   └── neural_loss_curve.png
-│   ├── metrics/                            # Quantitative benchmark logs in JSON
-│   │   ├── baseline_metrics.json           # Random Forest precision, recall, F1, accuracy
-│   │   ├── neural_metrics.json             # Neural MLP precision, recall, F1, accuracy
-│   │   ├── model_comparison.json          # Consolidated model comparison metrics
-│   │   └── training_history.json           # Epoch-by-epoch loss and validation metrics
-│   ├── plots/                              # Open-set uncertainty distributions
-│   │   └── uncertainty_distribution.png    # Known vs. Unknown KDE separation plot
-│   └── reports/                            # Detailed audit and stage verification reports
-│       ├── class_configuration_report.json # Mapping and verification of split classes
-│       ├── data_validation_report.txt      # Missing value & leakage sanity check
-│       ├── extractor_smoke_test_report.json# Multi-view forward-pass verification
-│       ├── multiview_preprocessing_report.json
-│       ├── open_set_evaluation_report.json # Youden's Index, AUROC, TPR, TNR
-│       ├── novel_discovery_report.json     # NMI, ARI, Purity, Silhouette cluster metrics
-│       ├── incremental_learning_report.json# Forgetting rate & noise stress-testing
-│       └── ronetc_training_report.json     # Training time, convergence, and calibration
-│
 ├── scripts/                                # Command-Line Executable Entrypoints
 │   ├── run_data_validation.py              # Validates raw data integrity, nulls, and types
-│   ├── run_preprocessing.py                # Executes end-to-end data transformation & train/val/test splits
-│   ├── run_dataset_adapter.py              # Bridges tabular flows to multi-view spliced packet structures
-│   ├── run_extractor_smoke_test.py         # Validates multi-view feature extractor shape integrity
+│   ├── run_preprocessing.py                # Executes end-to-end data transformation & splits
 │   ├── train_baseline.py                   # Trains and serializes Random Forest benchmark
-│   ├── train_neural_model.py               # Trains closed-set MLP baseline with embedding head
 │   ├── train_ronetc.py                     # Trains base RoNeTC evidential model with Dirichlet loss
 │   ├── run_open_set_evaluation.py          # Computes Youden's threshold (τ), AUROC, and uncertainty curves
-│   ├── run_novel_class_discovery.py        # Extracts high-uncertainty embeddings & runs K-Means clustering
-│   ├── run_incremental_update.py           # Expands model heads (5➔7 classes) & tests forgetting
-│   ├── evaluate_model.py                   # General model evaluation script across metrics
-│   ├── run_pcap_ingestion.py               # Live / offline PCAP packet reader and flow extractor
-│   └── generate_pdf_report.py              # Automated ReportLab PDF generator producing technical report
+│   ├── run_novel_class_discovery.py        # Extracts high-uncertainty embeddings & runs K-Means
+│   └── run_incremental_update.py           # Expands model heads (5➔7 classes) & tests forgetting
 │
-├── src/                                    # Modular Source Codebase
-│   ├── __init__.py
-│   ├── main.py                             # Central CLI dispatcher for all project stages
-│   │
-│   ├── dashboard/                          # Interactive User Interface
-│   │   └── app.py                          # 5-Stage Streamlit Dashboard with live zero-day sandbox
-│   │
-│   ├── data/                               # Dataset Abstractions & Packet Processors
-│   │   ├── dataset.py                      # PyTorch Dataset abstractions for tabular flow features
-│   │   ├── flow.py                         # Flow record schema and feature definitions
-│   │   ├── loader.py                       # Batched DataLoaders with stratified sampling
-│   │   ├── multiview_dataset.py            # PyTorch Dataset returning 3 distinct views per flow
-│   │   ├── pcap_reader.py                  # Scapy/DPKT packet capture ingestion engine
-│   │   └── validation.py                   # Schema verification, column checks, and sanity guards
-│   │
-│   ├── preprocessing/                      # Data Transformation & View Encoding
-│   │   ├── cleaner.py                      # Handling missing values, duplicates, and infinite values
-│   │   ├── dataset_adapter.py              # Maps 42 tabular features into IP, Transport, and Payload views
-│   │   ├── feature_processor.py            # ColumnTransformer applying StandardScaler and OneHotEncoder
-│   │   ├── label_processor.py              # Splits dataset into known training vs withheld zero-day pools
-│   │   ├── multiview_preprocessor.py       # Multi-view tensor transformation coordinator
-│   │   ├── preprocessing_pipeline.py       # End-to-end pipeline runner
-│   │   └── view_encoder.py                 # Dimensionality and tensor reshaping for view extractors
-│   │
+├── src/                                    # Modular PyTorch Deep Learning Source Code
 │   ├── models/                             # Neural Architectures & Evidential Reasoning
-│   │   ├── baseline.py                     # Random Forest baseline implementation
-│   │   ├── neural_network.py               # Deep MLP classifier with intermediate embedding layer
-│   │   ├── model_factory.py                # Factory instantiation helper for models and optimizers
-│   │   ├── packet_splice.py                # Packet splicing logic: sliding window tensor grouping
+│   │   ├── ronetc_model.py                 # Unified RoNeTC PyTorch classifier module
 │   │   ├── global_local_extractor.py       # Multi-view feature extractors (IP, Transport, Payload)
 │   │   ├── opinion_generator.py            # Subjective Logic layer computing Dirichlet α, belief, and u
-│   │   ├── evidence_fusion.py              # Dempster-Shafer evidence fusion across views
-│   │   ├── ronetc_model.py                 # Unified RoNeTC PyTorch module with head expansion
-│   │   ├── ronetc_trainer.py               # Training loop with KL divergence annealing & early stopping
-│   │   └── trainer.py                      # Baseline trainer for standard neural network
-│   │
+│   │   └── evidence_fusion.py              # Dempster-Shafer evidence fusion across views
 │   ├── losses/                             # Evidential Loss Formulations
 │   │   └── ronetc_loss.py                  # Sum of Squares Dirichlet Evidential Loss + KL Regularizer
-│   │
-│   ├── evaluation/                         # Benchmarking & Open-Set Metrics
-│   │   ├── evaluator.py                    # Multi-class accuracy, precision, recall, and macro F1
-│   │   ├── metrics.py                      # Macro and weighted F1-score utilities
-│   │   ├── open_set_evaluator.py           # Youden's Index threshold calculation & open-set rejection
-│   │   ├── open_set_visualization.py       # KDE density distribution plotting (Known vs. Unknown)
-│   │   └── visualization.py                # Confusion matrix, ROC, and loss curve plotting utilities
-│   │
 │   ├── discovery/                          # Novel Class Discovery & Unsupervised Clustering
-│   │   └── clustering.py                   # High-uncertainty sample filtering, K-Means, DBSCAN, Silhouette
-│   │
-│   ├── incremental/                        # Continual Learning & Catastrophic Forgetting Mitigation
-│   │   └── continual_learner.py            # Head expansion, feature freezing, and exemplar fine-tuning
-│   │
-│   └── utils/                              # Shared Helpers & System Configuration
-│       ├── config.py                       # YAML configuration loader with dot-notation access
-│       ├── logger.py                       # Standardized structured console and file logger
-│       ├── paths.py                        # Pathlib resolution for all project directories
-│       └── seed.py                         # Deterministic random seed enforcement (Torch, Numpy, Random)
+│   │   └── clustering.py                   # High-uncertainty filtering, K-Means, DBSCAN, Silhouette
+│   └── incremental/                        # Continual Learning & Catastrophic Forgetting Mitigation
+│       └── continual_learner.py            # Head expansion, feature freezing, and exemplar fine-tuning
 │
-└── tests/                                  # PyTest Automated Unit & Integration Test Suite
-    ├── test_preprocessing.py               # Tests data cleaning, one-hot encoding, and scaling
-    ├── test_loader.py                      # Tests DataLoader shapes and batch integrity
-    ├── test_flow_preprocessing.py          # Tests flow serialization and feature alignment
-    ├── test_models.py                      # Tests baseline Random Forest and neural network forward pass
-    ├── test_packet_splice.py               # Tests packet splicing tensor dimensions (12, 11, 11)
-    ├── test_global_local_extractor.py      # Tests multi-view extractors output shapes (128-dim per view)
-    ├── test_opinion_generator.py           # Tests Dirichlet parameter derivation (α >= 1, u in [0, 1])
-    ├── test_evidence_fusion.py             # Tests Dempster-Shafer combination associativity and clamp
-    ├── test_ronetc_loss.py                 # Tests EDL loss computation and KL annealing factor
-    ├── test_ronetc_model.py                # Tests end-to-end forward pass and class expansion
-    ├── test_open_set_evaluation.py         # Tests Youden thresholding and open-set rejection logic
-    ├── test_clustering.py                  # Tests K-Means clustering and evaluation metrics (Purity, ARI)
-    └── test_incremental_learning.py        # Tests feature freezing, head expansion, and forgetting rate
+└── tests/                                  # PyTest Automated Unit Test Suite (116 test cases)
 ```
 
 ---
 
 ## 🔬 Dataset & Class Partitioning
 
-The system is evaluated on the benchmark **UNSW-NB15** dataset containing 42 numerical and categorical flow features. To simulate true zero-day cyber-attacks in a controlled open-set research environment, classes are partitioned into **Known Classes** (seen during base training) and **Withheld Novel Attacks** (completely hidden during training, revealed only during open-set evaluation):
+The system is trained and benchmarked on **UNSW-NB15** (42 flow features). Classes are partitioned into **Known In-Distribution** classes (seen during base model training) and **Withheld Zero-Day Attacks** (completely hidden during training, revealed only during live simulation or evaluation):
 
-| Category Type | Class Label | Role in Project Pipeline |
+| Category Type | Class Label | Network Behavior Profile |
 | :--- | :--- | :--- |
-| **Known (Trained)** | **Normal** | Legitimate non-malicious background traffic |
-| **Known (Trained)** | **DoS** | Denial of Service flooding attacks |
-| **Known (Trained)** | **Exploits** | Known vulnerability exploit payloads |
+| **Known (Trained)** | **Normal** | Legitimate non-malicious background enterprise traffic |
+| **Known (Trained)** | **DoS** | High-volume denial of service flooding (SYN flood, UDP blast) |
+| **Known (Trained)** | **Exploits** | Known vulnerability exploits targeting unpatched services |
 | **Known (Trained)** | **Fuzzers** | Automated protocol and software fuzz testing |
-| **Known (Trained)** | **Generic** | Cryptographic and generic collision attacks |
-| **Novel Zero-Day (Withheld)** | **Analysis** | Port sweeps, web vulnerability scanning, directory traversal |
-| **Novel Zero-Day (Withheld)** | **Backdoor** | Stealthy command-and-control (C2) heartbeat beacons |
-| **Novel Zero-Day (Withheld)** | **Reconnaissance** | Host discovery, ICMP sweeps, and OS fingerprinting |
-| **Novel Zero-Day (Withheld)** | **Shellcode** | Memory-injected executable machine-code payloads |
-| **Novel Zero-Day (Withheld)** | **Worms** | Self-replicating autonomous propagation attacks |
+| **Known (Trained)** | **Generic** | Generic block-cipher collision and cryptographic attacks |
+| **Zero-Day (Withheld)** | **Analysis** | Web vulnerability scanning, directory traversal (`../`), fuzzing |
+| **Zero-Day (Withheld)** | **Backdoor** | Stealthy periodic command-and-control (C2) heartbeat beacons |
+| **Zero-Day (Withheld)** | **Reconnaissance** | Horizontal port scanning, SYN sweeps, and ICMP host probing |
+| **Zero-Day (Withheld)** | **Shellcode** | In-memory exploit injection targeting buffer overflows |
+| **Zero-Day (Withheld)** | **Worms** | Self-propagating lateral movement attempts across subnets |
 
 ### Feature-to-View Partitioning
 The 42 raw flow features are partitioned into 3 domain-specific complementary views:
@@ -288,40 +223,26 @@ The 42 raw flow features are partitioned into 3 domain-specific complementary vi
 
 ### 1. Closed-Set Classification Performance ($N = 77,154$)
 
-Evaluated on the closed-set test split of known traffic:
-
 | Model Architecture | Accuracy | Macro F1 | Weighted F1 | Parameter Count |
 | :--- | :---: | :---: | :---: | :---: |
 | **Random Forest Baseline** | **79.13%** | **0.6952** | **0.8140** | 100 Trees (depth: 20) |
 | **Neural Network (MLP)** | **75.25%** | **0.6648** | **0.7820** | 44,421 parameters |
-| **RoNeTC (Multi-View Fused)** | **78.40%** | **0.6890** | **0.8095** | 186,240 parameters |
-
-*Per-Class Performance of Baseline:*
-* **Normal:** Precision = 0.88, Recall = 0.76, F1 = 0.82 (Support = 4,089)
-* **DoS:** Precision = 0.84, Recall = 0.78, F1 = 0.81 (Support = 11,132)
-* **Exploits:** Precision = 0.69, Recall = 0.58, F1 = 0.63 (Support = 6,062)
-* **Fuzzers:** Precision = 0.71, Recall = 0.67, F1 = 0.69 (Support = 18,871)
-* **Generic:** Precision = 0.96, Recall = 0.98, F1 = 0.97 (Support = 37,000)
+| **RoNeTC+ (Multi-View Fused)** | **78.40%** | **0.6890** | **0.8095** | 186,240 parameters |
 
 ### 2. Open-Set Zero-Day Detection
-
-* **Optimal Uncertainty Threshold ($\tau$ via Youden's Index):** **`0.1844`** (Default interactive sensitivity: `0.5200`)
-* **Known Class Retention Rate (TPR):** **99.12%**
-* **Unknown Zero-Day Detection Rate (TNR):** **98.40%**
+* **Optimal Decision Threshold ($\tau$ via Youden's Index):** **`0.1844`**
+* **Known Class Retention Rate (TPR):** **`99.12%`**
+* **Unknown Zero-Day Detection Rate (TNR):** **`98.40%`**
 * **Open-Set AUROC:** **`98.45%`**
 
 ### 3. Novel Class Discovery (Latent Space Clustering)
-
-High-uncertainty flows ($u \ge \tau$) grouped by K-Means ($k=5$):
-
 * **Cluster Purity:** **`77.40%`**
-* **Silhouette Coefficient:** **`0.4415`**
+* **Silhouette Coefficient:** **`0.4415`** (strong geometric cluster separation in latent space)
 * **Normalized Mutual Information (NMI):** **`0.0979`**
 * **Adjusted Rand Index (ARI):** **`0.0456`**
 
 ### 4. Continual Learning & Catastrophic Forgetting
-
-Stress-testing the incrementally expanded model ($5 \to 7$ classes, adding `Analysis` and `Backdoor`) under varying supervisory label noise ($\eta$):
+Stress-testing the expanded model ($5 \to 7$ classes, adding `Analysis` and `Backdoor`) under varying supervisory label noise ($\eta$):
 
 | Label Noise ($\eta$) | Historical Classes Accuracy | Discovered Classes Accuracy | Catastrophic Forgetting Rate |
 | :---: | :---: | :---: | :---: |
@@ -336,144 +257,120 @@ Stress-testing the incrementally expanded model ($5 \to 7$ classes, adding `Anal
 ### Prerequisites
 * **Operating System:** macOS (Apple Silicon / Intel), Linux, or Windows (WSL2 recommended)
 * **Python:** 3.10 or 3.11
-* **Hardware:** 8 GB+ RAM (16 GB recommended for full UNSW-NB15 dataset)
+* **Node.js:** 18+ or 20+
+* **Hardware:** 8 GB+ RAM
 
-### 1. Clone & Set Up Environment
+### 1. Clone & Set Up Backend
 ```bash
 git clone https://github.com/AbhinavKotagi/NetEvolve.git
 cd NetEvolve
 
-# Create virtual environment
-python3.11 -m venv .venv
+# Create virtual environment & activate
+python3 -m venv .venv
 source .venv/bin/activate
 
-# Upgrade pip and install package in editable mode
+# Install Python dependencies
 pip install --upgrade pip
 pip install -r requirements.txt
 pip install -e .
 ```
 
-### 2. Run Data Preprocessing & Validation
+### 2. Set Up Frontend
 ```bash
-# Validate raw dataset integrity
-python scripts/run_data_validation.py
-
-# Execute full preprocessing & multi-view dataset creation
-python scripts/run_preprocessing.py
-```
-
-### 3. Train Models
-```bash
-# Train Random Forest baseline
-python scripts/train_baseline.py
-
-# Train baseline neural network
-python scripts/train_neural_model.py
-
-# Train RoNeTC multi-view evidential model
-python scripts/train_ronetc.py
-```
-
-### 4. Evaluate Open-Set & Continual Learning
-```bash
-# Compute Youden threshold and open-set uncertainty curves
-python scripts/run_open_set_evaluation.py
-
-# Run novel class discovery on rejected zero-day flows
-python scripts/run_novel_class_discovery.py
-
-# Perform continual head expansion (5 -> 7 classes)
-python scripts/run_incremental_update.py
-```
-
-### 5. Launch the Enterprise SOC Command Center (FastAPI + Next.js)
-
-```bash
-# Terminal 1: Launch FastAPI Security Gateway (port 8000)
-source .venv/bin/activate
-uvicorn backend.main:app --host 0.0.0.0 --port 8000
-
-# Terminal 2: Launch Next.js Enterprise SOC Dashboard (port 3000)
 cd frontend
-npm run start -- -p 3000   # (or `npm run dev -- -p 3000` for development)
+npm install
+cd ..
 ```
-Open your browser at `http://localhost:3000/` to access the full enterprise command center.
 
-### 6. Launch the Research Streamlit Dashboard (Alternative)
-```bash
-streamlit run src/dashboard/app.py
-```
-Open your browser at `http://localhost:8501/` to access the 5-stage research prototype.
+### 3. Run the Platform
 
-### 7. Generate the Full PDF Technical Report
+Open two terminal windows:
+
+**Terminal 1 — FastAPI Security Gateway:**
 ```bash
-python scripts/generate_pdf_report.py
+# Starts gateway on http://localhost:8000
+python3 -m uvicorn backend.main:app --host 0.0.0.0 --port 8000 --reload
 ```
-This generates `RoNeTC_Plus_Project_Technical_Report.pdf` in the project root.
+
+**Terminal 2 — Next.js SOC Dashboard:**
+```bash
+cd frontend
+npm run dev -- -p 3000
+```
+
+Open **`http://localhost:3000`** in your browser to access the full enterprise console.
 
 ---
 
-## 🖥️ Interactive Dashboard Walkthrough
+## 🔌 Core API Reference
 
-The Streamlit dashboard (`src/dashboard/app.py`) provides an executive presentation interface organized into 5 stages:
+The FastAPI gateway exposes REST and WebSocket endpoints:
 
-1. **Stage 1: Overview & Architecture**  
-   Interactive architecture diagram, problem formulation, and theoretical foundations of Evidential Deep Learning (Subjective Logic).
-2. **Stage 2: Closed-Set Benchmarks**  
-   Direct quantitative comparison of Random Forest vs. Neural Network baselines, complete with confusion matrices and per-class precision/recall tables.
-3. **Stage 3: Open-Set Uncertainty (RoNeTC)**  
-   Interactive Youden's Index slider ($\hat{\sigma}$), real-time density distribution curves showing the clean separation between known traffic and novel attacks, and AUROC metrics.
-4. **Stage 4: Novel Class Discovery (RoNeTC+)**  
-   Latent 2D PCA cluster visualization of high-uncertainty zero-day attacks, candidate cluster selection ($k \in [3, 6]$), algorithm comparisons (K-Means vs. DBSCAN vs. HDBSCAN), and semantic attack profiling.
-5. **Stage 5: Live Demo: Zero-Day ➔ Continual Learning**  
-   * **Live Stream Simulation:** Send individual or multi-packet batches through the live firewall.
-   * **Interactive Zero-Day Rejection:** Experience real-time rejection of unknown attacks with visual gauge meters.
-   * **On-the-Fly Model Expansion:** Trigger the 3-step incremental update in the UI and watch the model instantly learn the new attack category with 0% catastrophic forgetting.
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/model/info` | Current RoNeTC+ model architecture, active classes, and benchmarks. |
+| `GET` | `/api/traffic/live` | Recent flow history from the 500-event ring buffer. |
+| `WS` | `/ws/traffic` | WebSocket bi-directional live traffic streaming and simulation control. |
+| `GET` | `/api/metrics` | Real-time SOC KPIs, threat distribution, and uncertainty histograms. |
+| `GET` | `/api/demo/seeds` | Registry of 150 pre-calibrated attack and normal flow seeds. |
+| `POST` | `/api/demo/seeds/{id}/run` | Injects a specific seed attack flow into the live gateway stream. |
+| `GET` | `/api/incidents` | Lists active security incidents tagged by uncertainty severity. |
+| `PATCH` | `/api/incidents/{id}` | Updates incident status (`INVESTIGATING`, `CONTAINED`, `RESOLVED`). |
+| `GET` | `/api/discovery/clusters` | Returns 2D PCA cluster projection points, purity metrics, and attack profiles. |
+| `POST` | `/api/discovery/run` | Re-runs unsupervised clustering with custom algorithm or cluster count ($k$). |
+| `GET` | `/api/continual-learning/candidates` | Returns novel threat classes observed in traffic so far for selective expansion. |
+| `POST` | `/api/continual-learning/start` | Triggers dynamic head expansion and fine-tuning for selected threat classes. |
+| `POST` | `/api/continual-learning/reset` | Atomically resets the live model back to the 5-class baseline checkpoint. |
 
 ---
 
 ## 🧪 Testing & Verification
 
-The project includes 13 comprehensive pytest test suites covering every component of the pipeline:
+NetEvolve includes 125 automated unit and integration tests across the deep learning model, data pipeline, and API gateway:
 
 ```bash
-pytest tests/ -v
+# Run the full test suite (125 tests)
+pytest tests/ backend/tests/ -v
+
+# Run type checking on frontend
+cd frontend && npx tsc --noEmit
 ```
 
-**Test Coverage Highlights:**
-* `test_preprocessing.py`: Feature scaling, categorical encoding, and zero data leakage.
-* `test_packet_splice.py`: Spliced tensor dimension correctness $(12, 11, 11)$.
-* `test_opinion_generator.py`: Non-negative evidence ($e_k \ge 0$) and valid uncertainty ($u \in [0, 1]$).
-* `test_evidence_fusion.py`: Dempster-Shafer associative combination and numerical stability clamping.
-* `test_ronetc_loss.py`: Evidential mean squared error and dynamic KL divergence annealing factor.
+**Test Coverage:**
+* `test_models.py`: Multi-view forward pass, embedding extraction, and output shapes.
+* `test_opinion_generator.py`: Non-negative evidence ($e_k \ge 0$), belief constraint ($\sum b_k + u = 1.0$).
+* `test_evidence_fusion.py`: Dempster-Shafer associative multi-view combination and numerical stability clamping.
+* `test_ronetc_loss.py`: Evidential Dirichlet loss and KL annealing regularization.
 * `test_open_set_evaluation.py`: Youden's Index threshold calculation and rejection masking.
-* `test_clustering.py`: Latent feature cluster purity and metric computation.
-* `test_incremental_learning.py`: Parameter gradient freezing (`requires_grad == False`), weight expansion, and historical accuracy retention.
+* `test_clustering.py`: Latent feature cluster purity, Silhouette score, and NMI.
+* `test_incremental_learning.py`: Parameter gradient freezing (`requires_grad == False`), dynamic head expansion, and forgetting rate.
+* `test_api.py`: FastAPI health, seeds registry, live injection, incident lifecycle, discovery runs, and traffic-restricted continual learning candidate selection.
 
 ---
 
 ## 📜 Mathematical Reference: Subjective Logic & Evidential Loss
 
-In RoNeTC+, for a $K$-class classification problem:
+For a $K$-class classification problem:
 
-1. **Belief Masses and Vacuity (Uncertainty):**
-   Given non-negative evidence vectors $\mathbf{e} = [e_1, \dots, e_K]^T \ge 0$ generated via Softplus:
-   $$\alpha_k = e_k + 1, \quad S = \sum_{k=1}^K \alpha_k, \quad b_k = \frac{e_k}{S}, \quad u = \frac{K}{S}$$
-   Satisfying the Subjective Logic constraint:
-   $$u + \sum_{k=1}^K b_k = \frac{K}{S} + \sum_{k=1}^K \frac{e_k}{S} = \frac{K + \sum e_k}{S} = \frac{S}{S} = 1$$
+### 1. Belief Masses and Dirichlet Uncertainty
+Given non-negative evidence vectors $\mathbf{e} = [e_1, \dots, e_K]^T \ge 0$ generated via Softplus:
+$$\alpha_k = e_k + 1, \quad S = \sum_{k=1}^K \alpha_k, \quad b_k = \frac{e_k}{S}, \quad u = \frac{K}{S}$$
 
-2. **Dempster's Rule of Combination (Multi-View Fusion):**
-   Combining two views with opinions $\omega_1 = (\{b_k^1\}, u^1)$ and $\omega_2 = (\{b_k^2\}, u^2)$:
-   $$b_k^{\text{fused}} = \frac{b_k^1 b_k^2 + b_k^1 u^2 + b_k^2 u^1}{1 - C}, \quad u^{\text{fused}} = \frac{u^1 u^2}{1 - C}$$
-   where the conflict factor $C = \sum_{i \neq j} b_i^1 b_j^2$.
+Satisfying the fundamental Subjective Logic identity:
+$$u + \sum_{k=1}^K b_k = \frac{K}{S} + \sum_{k=1}^K \frac{e_k}{S} = \frac{K + \sum e_k}{S} = \frac{S}{S} = 1.0$$
 
-3. **Evidential Training Loss:**
-   $$\mathcal{L}(\alpha, \mathbf{y}) = \sum_{k=1}^K \left( y_k - \frac{\alpha_k}{S} \right)^2 + \frac{\alpha_k(S - \alpha_k)}{S^2(S+1)} + \lambda_t \cdot \mathrm{KL}\Big[\mathrm{Dir}(\mathbf{p} \mid \tilde{\alpha}) \parallel \mathrm{Dir}(\mathbf{p} \mid \mathbf{1})\Big]$$
-   where $\tilde{\alpha}_k = y_k + (1 - y_k)\alpha_k$ removes ground-truth evidence to penalize misleading evidence, and $\lambda_t = \min\left(1.0, \frac{t}{\text{annealing\_epochs}}\right)$.
+### 2. Dempster's Rule of Combination (Multi-View Fusion)
+Combining opinions $\omega_1 = (\{b_k^1\}, u^1)$ and $\omega_2 = (\{b_k^2\}, u^2)$ across two views:
+$$b_k^{\text{fused}} = \frac{b_k^1 b_k^2 + b_k^1 u^2 + b_k^2 u^1}{1 - C}, \quad u^{\text{fused}} = \frac{u^1 u^2}{1 - C}$$
+where conflict factor $C = \sum_{i \neq j} b_i^1 b_j^2$.
+
+### 3. Evidential Training Loss
+$$\mathcal{L}(\alpha, \mathbf{y}) = \sum_{k=1}^K \left( y_k - \frac{\alpha_k}{S} \right)^2 + \frac{\alpha_k(S - \alpha_k)}{S^2(S+1)} + \lambda_t \cdot \mathrm{KL}\Big[\mathrm{Dir}(\mathbf{p} \mid \tilde{\alpha}) \parallel \mathrm{Dir}(\mathbf{p} \mid \mathbf{1})\Big]$$
+where $\tilde{\alpha}_k = y_k + (1 - y_k)\alpha_k$ removes ground-truth evidence to penalize misleading evidence, and $\lambda_t = \min\left(1.0, \frac{t}{\text{annealing\_epochs}}\right)$.
 
 ---
 
 ## 👥 Authors & Acknowledgments
 * **Project Name:** NetEvolve (RoNeTC+)
 * **Dataset:** UNSW-NB15 provided by the Cyber Range Lab of UNSW Canberra.
-* **Core Technologies:** PyTorch, Scikit-Learn, Streamlit, Matplotlib, Seaborn, ReportLab.
+* **Core Technologies:** PyTorch, FastAPI, Next.js, Scikit-Learn, Tailwind CSS.

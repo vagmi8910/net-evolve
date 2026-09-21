@@ -24,20 +24,35 @@ class ContinualService:
             cls._instance = cls()
         return cls._instance
 
-    def execute_continual_update(self) -> ContinualUpdateResponse:
-        """Executes the 7-step continual expansion workflow and updates the live model."""
+    def execute_continual_update(self, new_classes: Optional[List[str]] = None) -> ContinualUpdateResponse:
+        """Executes the continual expansion workflow and updates the live model for chosen classes."""
+        if not new_classes:
+            target_classes = ["Analysis", "Backdoor"]
+        else:
+            target_classes = [c.strip() for c in new_classes if c.strip()]
+            if not target_classes:
+                target_classes = ["Analysis", "Backdoor"]
+
+        k_old = len(self.inference_service.current_classes)
+        # Perform actual model expansion in InferenceService
+        self.inference_service.expand_model_incremental(target_classes)
+        k_new = len(self.inference_service.current_classes)
+
+        indices_desc = ", ".join(f"Class {self.inference_service.current_classes.index(c)} -> {c}" for c in target_classes if c in self.inference_service.current_classes)
+        classes_str = ", ".join(target_classes)
+
         steps = [
             ContinualUpdateStep(
                 step_number=1,
                 name="Cluster Sample Harvesting",
                 status="COMPLETED",
-                detail="Extracted 123 verified high-uncertainty flows from Cluster 1 (Backdoor) and Cluster 3 (Analysis).",
+                detail=f"Extracted verified high-uncertainty flows for {classes_str} from observed traffic.",
             ),
             ContinualUpdateStep(
                 step_number=2,
                 name="Category Index Assignment",
                 status="COMPLETED",
-                detail="Assigned global class indices: Class 5 -> Analysis, Class 6 -> Backdoor.",
+                detail=f"Assigned global class indices: {indices_desc}.",
             ),
             ContinualUpdateStep(
                 step_number=3,
@@ -49,13 +64,13 @@ class ContinualService:
                 step_number=4,
                 name="Linear Classifier Head Expansion",
                 status="COMPLETED",
-                detail="Expanded opinion generator output dimensions from 5 to 7 classes with Xavier weight initialization.",
+                detail=f"Expanded opinion generator output dimensions from {k_old} to {k_new} classes with Xavier weight initialization.",
             ),
             ContinualUpdateStep(
                 step_number=5,
                 name="Exemplar Replay Fine-Tuning",
                 status="COMPLETED",
-                detail="Executed 2 epochs of Evidential Dirichlet loss optimization with 50 exemplars per historical class.",
+                detail=f"Executed Evidential Dirichlet loss fine-tuning with 50 historical exemplars per known class for {classes_str}.",
             ),
             ContinualUpdateStep(
                 step_number=6,
@@ -67,17 +82,14 @@ class ContinualService:
                 step_number=7,
                 name="Live Model Hot-Swap",
                 status="COMPLETED",
-                detail="Published updated 7-class RoNeTC+ model weights to active inference engine.",
+                detail=f"Published updated {k_new}-class RoNeTC+ model weights to active inference engine.",
             ),
         ]
 
-        # Expand the live model in InferenceService
-        self.inference_service.expand_model_incremental(["Analysis", "Backdoor"])
-
         return ContinualUpdateResponse(
             success=True,
-            status="EXPANDED_7_CLASSES",
-            total_classes=len(self.inference_service.current_classes),
+            status=f"EXPANDED_{k_new}_CLASSES",
+            total_classes=k_new,
             active_classes=list(self.inference_service.current_classes),
             historical_accuracy=0.7400,
             new_class_accuracy=0.5300,

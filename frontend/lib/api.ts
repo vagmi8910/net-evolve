@@ -8,6 +8,7 @@ import {
   DiscoveryResponse,
   ModelInfo,
   ContinualUpdateResponse,
+  ContinualCandidatesResponse,
   SimStatus,
   DemoSeedRegistryResponse,
   DemoSeed,
@@ -79,6 +80,12 @@ export const api = {
     fetchJson<DiscoveryResponse>(`/api/discovery/run?algorithm=${algorithm}&n_clusters=${n_clusters}`, { method: "POST" }),
 
   // Continual Learning
-  startContinualLearning: () => fetchJson<ContinualUpdateResponse>("/api/continual-learning/start", { method: "POST" }),
+  startContinualLearning: (classes?: string[]) =>
+    fetchJson<ContinualUpdateResponse>("/api/continual-learning/start", {
+      method: "POST",
+      body: classes && classes.length > 0 ? JSON.stringify({ classes }) : undefined,
+    }),
   resetContinualLearning: () => fetchJson<{ status: string }>("/api/continual-learning/reset", { method: "POST" }),
+  getContinualLearningCandidates: () =>
+    fetchJson<ContinualCandidatesResponse>("/api/continual-learning/candidates"),
 };
