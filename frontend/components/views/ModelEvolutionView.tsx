@@ -58,6 +58,7 @@ export function ModelEvolutionView({
   const [isLoadingCandidates, setIsLoadingCandidates] = useState<boolean>(false);
   const [isInjectingTraffic, setIsInjectingTraffic] = useState<boolean>(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const userHasCustomizedSelection = React.useRef<boolean>(false);
 
   // Fetch candidate risks that have actually arrived in traffic so far
   const loadCandidates = useCallback(async () => {
@@ -70,18 +71,18 @@ export function ModelEvolutionView({
       }
       setIsExpanded(data.is_expanded || false);
 
-      // Auto-select unlearned candidates that have arrived from traffic
+      // Candidate classes that have not yet been trained into the model
       const unlearned = (data.candidates || [])
         .filter((c) => !c.is_learned)
         .map((c) => c.name);
 
       setSelectedClasses((prev) => {
-        // Keep existing selections that are still unlearned candidates, or default to all unlearned
-        if (prev.length === 0 && unlearned.length > 0) {
-          return unlearned;
+        // If the user has manually selected or deselected classes, preserve their exact choice
+        if (userHasCustomizedSelection.current) {
+          return prev.filter((name) => unlearned.includes(name));
         }
-        const filtered = prev.filter((name) => unlearned.includes(name));
-        return filtered.length > 0 ? filtered : unlearned;
+        // Initial default: select all unlearned candidate risks
+        return unlearned;
       });
     } catch (err) {
       console.error("Failed to load continual learning candidates:", err);
@@ -94,16 +95,23 @@ export function ModelEvolutionView({
     loadCandidates();
   }, [loadCandidates]);
 
-  // Refresh candidate list whenever total flows or threat distribution in live stream increments
-  const totalFlows = metrics?.total_flows || 0;
+  // Refresh candidate list only when new threat categories emerge in traffic telemetry
+  const threatCategoryFingerprint = useMemo(() => {
+    const threats = metrics?.threat_distribution || {};
+    return Object.keys(threats).sort().join(",");
+  }, [metrics?.threat_distribution]);
+
+  const prevThreatFingerprint = React.useRef<string>("");
   useEffect(() => {
-    if (totalFlows > 0) {
+    if (threatCategoryFingerprint && threatCategoryFingerprint !== prevThreatFingerprint.current) {
+      prevThreatFingerprint.current = threatCategoryFingerprint;
       loadCandidates();
     }
-  }, [totalFlows, loadCandidates]);
+  }, [threatCategoryFingerprint, loadCandidates]);
 
   // Handle class selection toggle
   const toggleClassSelection = (className: string) => {
+    userHasCustomizedSelection.current = true;
     setSelectedClasses((prev) =>
       prev.includes(className)
         ? prev.filter((c) => c !== className)
@@ -111,12 +119,20 @@ export function ModelEvolutionView({
     );
   };
 
+  // Select ONLY a single novel class and deselect all others
+  const handleSelectOnly = (className: string) => {
+    userHasCustomizedSelection.current = true;
+    setSelectedClasses([className]);
+  };
+
   const handleSelectAll = () => {
+    userHasCustomizedSelection.current = true;
     const unlearned = candidateRisks.filter((c) => !c.is_learned).map((c) => c.name);
     setSelectedClasses(unlearned);
   };
 
   const handleClearSelection = () => {
+    userHasCustomizedSelection.current = true;
     setSelectedClasses([]);
   };
 
@@ -217,6 +233,7 @@ export function ModelEvolutionView({
       if (res.active_classes) {
         setActiveClasses(res.active_classes);
       }
+      userHasCustomizedSelection.current = false;
       await loadCandidates();
       onUpdateCompleted();
     } catch (err) {
@@ -235,6 +252,7 @@ export function ModelEvolutionView({
       setIsExpanded(false);
       setActiveStepIndex(-1);
       setActiveClasses(["Normal", "DoS", "Exploits", "Fuzzers", "Generic"]);
+      userHasCustomizedSelection.current = false;
       await loadCandidates();
       onUpdateCompleted();
     } catch (err) {
@@ -326,7 +344,7 @@ export function ModelEvolutionView({
 
           <div className="flex items-center space-x-2">
             <span className="rounded-full bg-gray-100 px-3 py-1 text-[11px] font-medium text-gray-600">
-              Flows Analyzed: {metrics?.total_flows || totalFlows}
+              Flows Analyzed: {metrics?.total_flows ?? 0}
             </span>
             <span className="rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-[11px] font-semibold text-[#007AFF]">
               Risks in Traffic: {candidateRisks.length}
@@ -440,7 +458,9 @@ export function ModelEvolutionView({
                         type="checkbox"
                         checked={isLearned ? true : isSelected}
                         disabled={isLearned || isUpdating}
-                        onChange={() => {
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => {
+                          e.stopPropagation();
                           if (!isLearned && !isUpdating) {
                             toggleClassSelection(candidate.name);
                           }
@@ -452,9 +472,24 @@ export function ModelEvolutionView({
                       </span>
                     </div>
 
-                    <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase border ${severityColor}`}>
-                      {candidate.severity}
-                    </span>
+                    <div className="flex items-center space-x-1.5">
+                      {!isLearned && (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectOnly(candidate.name);
+                          }}
+                          title={`Select only ${candidate.name} and deselect other classes`}
+                          className="text-[11px] font-semibold text-[#007AFF] hover:text-white hover:bg-[#007AFF] bg-blue-50 border border-blue-200/90 px-2 py-0.5 rounded-md transition shadow-2xs cursor-pointer"
+                        >
+                          Only
+                        </button>
+                      )}
+                      <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase border ${severityColor}`}>
+                        {candidate.severity}
+                      </span>
+                    </div>
                   </div>
 
                   <p className="text-xs text-gray-600 mt-2 leading-relaxed line-clamp-2">
